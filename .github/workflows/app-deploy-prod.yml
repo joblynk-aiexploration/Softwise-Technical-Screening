@@ -120,16 +120,18 @@ jobs:
               exit 1
             fi
 
+            echo "whoami=$(whoami) HOME=${HOME:-} PATH=$PATH"
+
             # Use deploy user's toolchain for git. npm/pip are best-effort on host.
             NPM_BIN="$(command -v npm || true)"
             if [ ! -x "$NPM_BIN" ]; then
-              NPM_BIN="$(sudo -n bash -lc 'command -v npm' 2>/dev/null || true)"
+              NPM_BIN="$(sudo -n bash -lc 'command -v npm || ls -1 /root/.nvm/versions/node/*/bin/npm 2>/dev/null | tail -n 1' 2>/dev/null || true)"
             fi
 
             PM2_BIN="$(command -v pm2 || true)"
             PM2_USE_SUDO=""
             if [ ! -x "$PM2_BIN" ]; then
-              PM2_BIN="$(sudo -n bash -lc 'command -v pm2' 2>/dev/null || true)"
+              PM2_BIN="$(sudo -n bash -lc 'command -v pm2 || ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1' 2>/dev/null || true)"
               PM2_USE_SUDO="sudo -n"
             fi
             if [ ! -x "$PM2_BIN" ]; then
@@ -138,6 +140,7 @@ jobs:
                 PM2_BIN="$NVM_PM2"
               fi
             fi
+            echo "resolved NPM_BIN=${NPM_BIN:-missing} PM2_BIN=${PM2_BIN:-missing} PM2_USE_SUDO=${PM2_USE_SUDO:-}"
             [ -x "$PM2_BIN" ] || { echo "pm2 not found for deploy user or sudo shell"; exit 127; }
 
             cd "$DEPLOY_PATH"
