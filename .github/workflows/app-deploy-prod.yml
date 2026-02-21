@@ -1,5 +1,4 @@
 name: Deploy JobLynk App to Production
-# trigger: keep workflow file touched for manual redeploys (ownership fix redeploy)
 
 on:
   push:
@@ -83,9 +82,7 @@ jobs:
             exit 1
           fi
 
-          if [ -z "${PROD_SSH_PORT}" ]; then
-            echo "PROD_SSH_PORT=22" >> "$GITHUB_ENV"
-          fi
+          # PROD_SSH_PORT defaults to 22 via env expression above.
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
@@ -95,7 +92,6 @@ jobs:
           key: ${{ env.PROD_SSH_KEY }}
           port: ${{ env.PROD_SSH_PORT }}
           script_stop: true
-          debug: true
           script: |
             # Force-load user environment in non-interactive SSH sessions
             if [ -f "$HOME/.bash_profile" ]; then . "$HOME/.bash_profile"; fi
@@ -120,7 +116,7 @@ jobs:
               exit 1
             fi
 
-            echo "whoami=$(whoami) HOME=${HOME:-} PATH=$PATH"
+            # Runtime diagnostics removed after stabilization.
 
             # Resolve NPM and handle sudo requirements for root-installed binaries.
             NPM_BIN="$(command -v npm || true)"
@@ -150,7 +146,7 @@ jobs:
               fi
             fi
 
-            echo "resolved NPM_BIN=${NPM_BIN:-missing} NPM_USE_SUDO=${NPM_USE_SUDO:-} PM2_BIN=${PM2_BIN:-missing} PM2_USE_SUDO=${PM2_USE_SUDO:-}"
+            # Binary resolution completed.
             if [ -n "$PM2_USE_SUDO" ]; then
               $PM2_USE_SUDO test -x "$PM2_BIN" || { echo "pm2 not found or not executable via sudo"; exit 127; }
             else
