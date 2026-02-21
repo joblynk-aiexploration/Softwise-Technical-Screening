@@ -26,9 +26,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install frontend dependencies
+      - name: Install frontend dependencies (including dev)
         working-directory: apps/customer-frontend
-        run: npm ci || npm install
+        env:
+          NODE_ENV: development
+          NPM_CONFIG_PRODUCTION: 'false'
+        run: npm ci --include=dev || npm install --include=dev
 
       - name: Build frontend
         working-directory: apps/customer-frontend
@@ -81,7 +84,7 @@ jobs:
 
             # Frontend
             cd "$DEPLOY_PATH/apps/customer-frontend"
-            npm ci || npm install
+            NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm install --include=dev
             npm run build
             pm2 restart customer-frontend --update-env
 
