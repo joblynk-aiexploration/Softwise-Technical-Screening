@@ -97,6 +97,12 @@ jobs:
           script_stop: true
           debug: true
           script: |
+            # Force-load user environment in non-interactive SSH sessions
+            if [ -f "$HOME/.bash_profile" ]; then . "$HOME/.bash_profile"; fi
+            if [ -f "$HOME/.bashrc" ]; then . "$HOME/.bashrc"; fi
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" || true
+
             set -eu
 
             DEPLOY_PATH="${{ secrets.PROD_DEPLOY_PATH }}"
@@ -125,6 +131,12 @@ jobs:
             if [ ! -x "$PM2_BIN" ]; then
               PM2_BIN="$(sudo -n bash -lc 'command -v pm2' 2>/dev/null || true)"
               PM2_USE_SUDO="sudo -n"
+            fi
+            if [ ! -x "$PM2_BIN" ]; then
+              NVM_PM2="$(find "$HOME/.nvm/versions/node" -maxdepth 4 \( -type f -o -type l \) -name pm2 2>/dev/null | head -n 1 || true)"
+              if [ -n "$NVM_PM2" ]; then
+                PM2_BIN="$NVM_PM2"
+              fi
             fi
             [ -x "$PM2_BIN" ] || { echo "pm2 not found for deploy user or sudo shell"; exit 127; }
 
