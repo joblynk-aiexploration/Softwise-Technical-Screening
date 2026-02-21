@@ -10,8 +10,9 @@ on:
         type: choice
         options: [deploy, rollback]
       ref:
-        description: "Git ref to deploy (branch/tag/sha). Leave blank for origin/main"
+        description: "Git ref to deploy (branch/tag/sha). Leave blank for origin/DEV"
         required: false
+        default: "DEV"
         type: string
       rollback_ref:
         description: "Rollback ref (optional). Leave blank to use previous successful ref"
@@ -31,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref || 'main' }}
+          ref: ${{ inputs.ref || 'DEV' }}
           submodules: false
 
       - name: Setup Node
@@ -79,7 +80,7 @@ jobs:
       PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
       PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
       PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT || '22' }}
-      TARGET_REF: ${{ inputs.ref || 'origin/main' }}
+      TARGET_REF: ${{ inputs.ref || 'origin/DEV' }}
     steps:
       - name: Validate deploy secrets
         shell: bash
@@ -135,10 +136,13 @@ jobs:
 
             cd "$DEPLOY_PATH"
             git config --global --add safe.directory "$DEPLOY_PATH" || true
-            git fetch origin main --tags
+            git fetch origin main DEV --tags
             if [ "${{ env.TARGET_REF }}" = "origin/main" ]; then
               git checkout main
               git reset --hard origin/main
+            elif [ "${{ env.TARGET_REF }}" = "origin/DEV" ] || [ "${{ env.TARGET_REF }}" = "DEV" ]; then
+              git checkout main
+              git reset --hard origin/DEV
             else
               git checkout --detach "${{ env.TARGET_REF }}"
             fi
