@@ -1,0 +1,101 @@
+name: Deploy JobLynk App to Production
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/customer-frontend/**'
+      - 'voice-call-agent/**'
+      - '.github/workflows/app-deploy-prod.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: joblynk-prod-deploy
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate build artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: apps/customer-frontend
+        run: npm ci || npm install
+
+      - name: Build frontend
+        working-directory: apps/customer-frontend
+        run: npm run build
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate voice-call-agent app import
+        working-directory: voice-call-agent
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python - <<'PY'
+          import importlib
+          importlib.import_module('app.main')
+          print('voice-call-agent import check passed')
+          PY
+
+  deploy:
+    name: Deploy to production host
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ secrets.PROD_SSH_PORT || '22' }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            DEPLOY_PATH="${{ secrets.PROD_DEPLOY_PATH }}"
+            if [ -z "${DEPLOY_PATH}" ]; then
+              DEPLOY_PATH="/root/.openclaw/workspace"
+            fi
+
+            cd "$DEPLOY_PATH"
+
+            # Keep production aligned with GitHub main
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
+
+            # Frontend
+            cd "$DEPLOY_PATH/apps/customer-frontend"
+            npm ci || npm install
+            npm run build
+            pm2 restart customer-frontend --update-env
+
+            # Talent backend
+            cd "$DEPLOY_PATH/voice-call-agent"
+            if [ -d venv ]; then
+              . venv/bin/activate
+            fi
+            if [ -f requirements.txt ]; then
+              pip install -r requirements.txt
+            fi
+            pm2 restart screening-talent --update-env
+
+            # Basic health checks
+            curl -fsS https://screening.joblynk.ai/ >/dev/null
+            curl -fsS https://screening.joblynk.ai/talent/login >/dev/null
+            echo "Production deployment completed successfully."
