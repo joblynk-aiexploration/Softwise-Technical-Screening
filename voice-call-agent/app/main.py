@@ -1585,24 +1585,8 @@ button{{width:100%;margin-top:12px;background:#0b5fff;color:#fff;border:none;bor
 
 @app.get("/forgot-password", response_class=HTMLResponse)
 def forgot_password_page(msg: str = ""):
-    message = "If the account exists, a reset code was sent." if msg == "sent" else ""
-    html_doc = f"""
-<!doctype html><html><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><title>Forgot Password - Joblynk</title></head>
-<body style='font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#eef4ff 0%,#f8fbff 100%);margin:0;color:#0a1f44'>
-<header style='background:linear-gradient(90deg,#0b5fff,#0051c8);color:#fff;padding:14px 24px;box-shadow:0 6px 20px rgba(0,51,128,.2)'><div style='max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap'><div><div style='font-size:18px;font-weight:800;line-height:1.2'>Joblynk Screening Console</div><div style='font-size:12px;opacity:.9'>Enterprise Interview Workflow</div></div><div><a style='color:#fff;text-decoration:none;font-weight:700;margin-left:12px' href='/login'>Login</a><a style='color:#fff;text-decoration:none;font-weight:700;margin-left:12px' href='/forgot-password'>Forgot Password</a><a style='color:#fff;text-decoration:none;font-weight:700;margin-left:12px' href='/reset-password'>Reset Password</a></div></div></header>
-<div style='max-width:1100px;margin:22px auto;padding:0 16px'>
-<div style='max-width:420px;margin:0 auto;background:#fff;border:1px solid #d7e5ff;border-radius:14px;padding:20px;box-shadow:0 10px 28px rgba(0,51,102,.08)'>
-<h2 style='margin-top:0'>Reset Password</h2>
-<div style='font-size:13px;color:#5f7398;margin-bottom:10px'>Enter your email. We will send a one-time code.</div>
-<div style='color:#0a3f9a;font-size:13px;margin-bottom:8px'>{html.escape(message)}</div>
-<form method='POST' action='/forgot-password'>
-<input type='email' name='email' required placeholder='adam@joblynk.ai' style='width:100%;padding:11px;border:1px solid #bfd3f8;border-radius:10px;margin-bottom:10px'/>
-<button type='submit' style='width:100%;background:#0b5fff;color:#fff;border:none;border-radius:10px;padding:10px'>Send reset code</button>
-</form>
-<div style='margin-top:10px'><a href='/reset-password'>I already have a code</a> · <a href='/login'>Back to login</a></div>
-</div></div></body></html>
-"""
-    return HTMLResponse(html_doc, headers={"Cache-Control": "no-store"})
+    target = "/forgot-password?msg=sent" if msg == "sent" else "/forgot-password"
+    return RedirectResponse(url=target, status_code=307)
 
 
 @app.post("/forgot-password")
@@ -1625,25 +1609,8 @@ def forgot_password_submit(request: Request, email: str = Form(...)):
 
 @app.get("/reset-password", response_class=HTMLResponse)
 def reset_password_page(err: str = ""):
-    error = "Invalid/expired code or weak password." if err == "1" else ""
-    html_doc = f"""
-<!doctype html><html><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><title>Set New Password - Joblynk</title></head>
-<body style='font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#eef4ff 0%,#f8fbff 100%);margin:0;color:#0a1f44'>
-<header style='background:linear-gradient(90deg,#0b5fff,#0051c8);color:#fff;padding:14px 24px;box-shadow:0 6px 20px rgba(0,51,128,.2)'><div style='max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap'><div><div style='font-size:18px;font-weight:800;line-height:1.2'>Joblynk Screening Console</div><div style='font-size:12px;opacity:.9'>Enterprise Interview Workflow</div></div><div><a style='color:#fff;text-decoration:none;font-weight:700;margin-left:12px' href='/login'>Login</a><a style='color:#fff;text-decoration:none;font-weight:700;margin-left:12px' href='/forgot-password'>Forgot Password</a><a style='color:#fff;text-decoration:none;font-weight:700;margin-left:12px' href='/reset-password'>Reset Password</a></div></div></header>
-<div style='max-width:1100px;margin:22px auto;padding:0 16px'>
-<div style='max-width:420px;margin:0 auto;background:#fff;border:1px solid #d7e5ff;border-radius:14px;padding:20px;box-shadow:0 10px 28px rgba(0,51,102,.08)'>
-<h2 style='margin-top:0'>Set New Password</h2>
-<div style='color:#b42318;font-size:13px;margin-bottom:8px'>{html.escape(error)}</div>
-<form method='POST' action='/reset-password'>
-<input type='email' name='email' required placeholder='adam@joblynk.ai' style='width:100%;padding:11px;border:1px solid #bfd3f8;border-radius:10px;margin-bottom:10px'/>
-<input type='text' name='code' required placeholder='6-digit reset code' style='width:100%;padding:11px;border:1px solid #bfd3f8;border-radius:10px;margin-bottom:10px'/>
-<input type='password' name='password' required placeholder='New password (min 10 chars)' style='width:100%;padding:11px;border:1px solid #bfd3f8;border-radius:10px;margin-bottom:10px'/>
-<button type='submit' style='width:100%;background:#0b5fff;color:#fff;border:none;border-radius:10px;padding:10px'>Update password</button>
-</form>
-<div style='margin-top:10px'><a href='/login'>Back to login</a></div>
-</div></div></body></html>
-"""
-    return HTMLResponse(html_doc, headers={"Cache-Control": "no-store"})
+    target = "/reset-password?err=1" if err == "1" else "/reset-password"
+    return RedirectResponse(url=target, status_code=307)
 
 
 @app.post("/reset-password")
