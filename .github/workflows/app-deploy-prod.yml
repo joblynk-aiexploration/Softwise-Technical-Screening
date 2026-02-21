@@ -122,26 +122,40 @@ jobs:
 
             echo "whoami=$(whoami) HOME=${HOME:-} PATH=$PATH"
 
-            # Use deploy user's toolchain for git. npm/pip are best-effort on host.
+            # Resolve NPM and handle sudo requirements for root-installed binaries.
             NPM_BIN="$(command -v npm || true)"
-            if [ ! -x "$NPM_BIN" ]; then
+            NPM_USE_SUDO=""
+            if [ -z "$NPM_BIN" ] || ! [ -x "$NPM_BIN" 2>/dev/null ]; then
               NPM_BIN="$(sudo -n bash -lc 'command -v npm || ls -1 /root/.nvm/versions/node/*/bin/npm 2>/dev/null | tail -n 1' 2>/dev/null || true)"
+              if [ -n "$NPM_BIN" ]; then
+                NPM_USE_SUDO="sudo -n"
+              fi
             fi
 
+            # Resolve PM2 and handle sudo requirements for root-installed binaries.
             PM2_BIN="$(command -v pm2 || true)"
             PM2_USE_SUDO=""
-            if [ ! -x "$PM2_BIN" ]; then
+            if [ -z "$PM2_BIN" ] || ! [ -x "$PM2_BIN" 2>/dev/null ]; then
               PM2_BIN="$(sudo -n bash -lc 'command -v pm2 || ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1' 2>/dev/null || true)"
-              PM2_USE_SUDO="sudo -n"
+              if [ -n "$PM2_BIN" ]; then
+                PM2_USE_SUDO="sudo -n"
+              fi
             fi
-            if [ ! -x "$PM2_BIN" ]; then
+
+            if [ -z "$PM2_BIN" ]; then
               NVM_PM2="$(find "$HOME/.nvm/versions/node" -maxdepth 4 \( -type f -o -type l \) -name pm2 2>/dev/null | head -n 1 || true)"
               if [ -n "$NVM_PM2" ]; then
                 PM2_BIN="$NVM_PM2"
+                PM2_USE_SUDO=""
               fi
             fi
-            echo "resolved NPM_BIN=${NPM_BIN:-missing} PM2_BIN=${PM2_BIN:-missing} PM2_USE_SUDO=${PM2_USE_SUDO:-}"
-            [ -x "$PM2_BIN" ] || { echo "pm2 not found for deploy user or sudo shell"; exit 127; }
+
+            echo "resolved NPM_BIN=${NPM_BIN:-missing} NPM_USE_SUDO=${NPM_USE_SUDO:-} PM2_BIN=${PM2_BIN:-missing} PM2_USE_SUDO=${PM2_USE_SUDO:-}"
+            if [ -n "$PM2_USE_SUDO" ]; then
+              $PM2_USE_SUDO test -x "$PM2_BIN" || { echo "pm2 not found or not executable via sudo"; exit 127; }
+            else
+              [ -x "$PM2_BIN" ] || { echo "pm2 not found or not executable for deploy user"; exit 127; }
+            fi
 
             cd "$DEPLOY_PATH"
             git config --global --add safe.directory "$DEPLOY_PATH" || true
@@ -151,11 +165,20 @@ jobs:
 
             # Frontend (dependency/build are optional if npm missing on host)
             cd "$DEPLOY_PATH/apps/customer-frontend"
-            if [ -x "$NPM_BIN" ]; then
-              env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" ci --include=dev || env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" install --include=dev
-              env NODE_OPTIONS=--max-old-space-size=4096 "$NPM_BIN" run build || true
+            CAN_RUN_NPM=false
+            if [ -n "$NPM_BIN" ]; then
+              if [ -n "$NPM_USE_SUDO" ]; then
+                $NPM_USE_SUDO test -x "$NPM_BIN" && CAN_RUN_NPM=true || true
+              else
+                [ -x "$NPM_BIN" ] && CAN_RUN_NPM=true || true
+              fi
+            fi
+
+            if [ "$CAN_RUN_NPM" = true ]; then
+              $NPM_USE_SUDO env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" ci --include=dev || $NPM_USE_SUDO env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" install --include=dev
+              $NPM_USE_SUDO env NODE_OPTIONS=--max-old-space-size=4096 "$NPM_BIN" run build || true
             else
-              echo "npm not available on host; skipping npm install/build"
+              echo "npm not available/executable on host; skipping npm install/build"
             fi
             $PM2_USE_SUDO "$PM2_BIN" restart customer-frontend --update-env
 
