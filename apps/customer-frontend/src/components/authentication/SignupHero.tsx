@@ -4,7 +4,7 @@ import Link from 'next/link';
 import RevealAnimation from '../animation/RevealAnimation';
 import SocialAuthV2 from './SocialAuthV2';
 
-const SignupHero = ({ status = '' }: { status?: string }) => {
+const SignupHero = ({ status = '', refCode = '' }: { status?: string; refCode?: string }) => {
   const success = status === 'created';
   const error = status === 'error';
 
@@ -16,6 +16,7 @@ const SignupHero = ({ status = '' }: { status?: string }) => {
             <RevealAnimation delay={0.1}>
               <div className="w-full px-8 py-14 lg:max-w-[400px]">
                 <form method="post" action="/talent/signup">
+                  {refCode && <input type="hidden" name="ref_code" value={refCode} />}
                   {success && (
                     <div className="mb-4 rounded-xl border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-800 dark:border-green-700 dark:bg-green-950/30 dark:text-green-200">
                       Account created successfully. You can now log in.

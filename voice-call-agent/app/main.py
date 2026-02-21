@@ -148,11 +148,13 @@ PROTECTED_PREFIXES = (
     "/resume",
     "/profile",
     "/db/health",
+    "/referrals",
 )
 
 PUBLIC_PREFIXES = (
     "/",
     "/login",
+    "/signup",
     "/contact-us",
     "/logout",
     "/forgot-password",
@@ -161,6 +163,7 @@ PUBLIC_PREFIXES = (
     "/twiml",
     "/audio",
     "/call/start",
+    "/r",
 )
 
 
@@ -706,6 +709,85 @@ def _normalize_email(email: str) -> str:
     return (email or "").strip().lower()
 
 
+def _generate_referral_code() -> str:
+    return f"JL{secrets.token_hex(4).upper()}"
+
+
+def _ensure_referral_profile(owner_email: str) -> dict:
+    email_n = _normalize_email(owner_email)
+    conn = _db_conn()
+    if not conn or not email_n:
+        return {}
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "select owner_email, referral_code from public.referral_profiles where owner_email=%s",
+                    (email_n,),
+                )
+                row = cur.fetchone()
+                if row:
+                    return {"owner_email": row[0], "referral_code": row[1]}
+
+                for _ in range(10):
+                    code = _generate_referral_code()
+                    cur.execute("select 1 from public.referral_profiles where referral_code=%s", (code,))
+                    if not cur.fetchone():
+                        cur.execute(
+                            "insert into public.referral_profiles (owner_email, referral_code, updated_at) values (%s,%s,now())",
+                            (email_n, code),
+                        )
+                        return {"owner_email": email_n, "referral_code": code}
+    except Exception as e:
+        log_event(f"REFERRAL_PROFILE_FAIL | {e}")
+    finally:
+        conn.close()
+    return {}
+
+
+def _referral_stats(referral_code: str) -> dict:
+    conn = _db_conn()
+    if not conn or not referral_code:
+        return {"clicks": 0, "signups": 0}
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    select
+                      sum(case when event_type='click' then 1 else 0 end) as clicks,
+                      sum(case when event_type='signup' then 1 else 0 end) as signups
+                    from public.referral_events
+                    where referral_code=%s
+                    """,
+                    (referral_code,),
+                )
+                row = cur.fetchone() or (0, 0)
+                return {"clicks": int(row[0] or 0), "signups": int(row[1] or 0)}
+    except Exception as e:
+        log_event(f"REFERRAL_STATS_FAIL | {e}")
+        return {"clicks": 0, "signups": 0}
+    finally:
+        conn.close()
+
+
+def _record_referral_event(referral_code: str, event_type: str, event_email: str = "", metadata: dict | None = None):
+    conn = _db_conn()
+    if not conn or not referral_code:
+        return
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "insert into public.referral_events (referral_code, event_type, event_email, metadata_json) values (%s,%s,%s,%s)",
+                    (referral_code, event_type, _normalize_email(event_email), json.dumps(metadata or {})),
+                )
+    except Exception as e:
+        log_event(f"REFERRAL_EVENT_FAIL | {e}")
+    finally:
+        conn.close()
+
+
 def _normalize_phone(phone: str) -> str:
     return re.sub(r"[^+\d]", "", (phone or "").strip())
 
@@ -1076,6 +1158,22 @@ def init_db():
                       details text,
                       created_at timestamptz not null default now()
                     );
+                    create table if not exists public.referral_profiles (
+                      id bigserial primary key,
+                      owner_email text not null unique,
+                      referral_code text not null unique,
+                      created_at timestamptz not null default now(),
+                      updated_at timestamptz not null default now()
+                    );
+                    create table if not exists public.referral_events (
+                      id bigserial primary key,
+                      referral_code text not null,
+                      event_type text not null,
+                      event_email text,
+                      metadata_json text not null default '{}',
+                      created_at timestamptz not null default now()
+                    );
+                    create index if not exists idx_referral_events_code on public.referral_events(referral_code);
                     """
                 )
         return True
@@ -1596,6 +1694,7 @@ def signup_submit(
     email: str = Form(...),
     password: str = Form(...),
     confirm_password: str = Form(...),
+    ref_code: str = Form(default=""),
 ):
     ip = _request_ip(request)
     if _is_rate_limited(f"signup:{ip}", limit=8, window_seconds=900):
@@ -1610,9 +1709,69 @@ def signup_submit(
     _save_auth_config(target, pwd)
     log_event(f"SIGNUP_CREATED email={target} name={(username or '').strip()[:80]}")
 
+    ref = (ref_code or "").strip().upper()
+    if ref:
+        conn = _db_conn()
+        try:
+            if conn:
+                with conn:
+                    with conn.cursor() as cur:
+                        cur.execute("select owner_email from public.referral_profiles where referral_code=%s", (ref,))
+                        owner = cur.fetchone()
+                        if owner and _normalize_email(owner[0]) != target:
+                            _record_referral_event(ref, "signup", target, {"source": "talent_signup"})
+        except Exception as e:
+            log_event(f"REFERRAL_SIGNUP_LINK_FAIL | {e}")
+        finally:
+            if conn:
+                conn.close()
+
     resp = RedirectResponse(url="/ui", status_code=303)
     resp.set_cookie(APP_SESSION_COOKIE, _session_token(target), httponly=True, samesite="lax", secure=False, path="/")
     return resp
+
+
+@app.get("/referrals/me")
+def referrals_me(request: Request):
+    if not _is_authenticated(request):
+        return JSONResponse({"detail": "Authentication required"}, status_code=401)
+    owner_email = _current_auth_email()
+    profile = _ensure_referral_profile(owner_email)
+    if not profile:
+        return JSONResponse({"detail": "Could not load referral profile"}, status_code=500)
+    code = profile.get("referral_code", "")
+    base = (PUBLIC_BASE_URL or "").rstrip("/")
+    referral_link = f"{base}/talent/r/{code}" if base else f"/talent/r/{code}"
+    stats = _referral_stats(code)
+    return JSONResponse({
+        "owner_email": owner_email,
+        "referral_code": code,
+        "referral_link": referral_link,
+        **stats,
+    })
+
+
+@app.get("/r/{referral_code}")
+def referral_redirect(referral_code: str, request: Request):
+    code = (referral_code or "").strip().upper()
+    conn = _db_conn()
+    exists = False
+    try:
+        if conn:
+            with conn:
+                with conn.cursor() as cur:
+                    cur.execute("select 1 from public.referral_profiles where referral_code=%s", (code,))
+                    exists = bool(cur.fetchone())
+    except Exception as e:
+        log_event(f"REFERRAL_REDIRECT_LOOKUP_FAIL | {e}")
+    finally:
+        if conn:
+            conn.close()
+
+    if exists:
+        _record_referral_event(code, "click", "", {"ip": _request_ip(request)})
+        return RedirectResponse(url=f"/signup?ref={code}", status_code=303)
+    return RedirectResponse(url="/signup", status_code=303)
 
 
 @app.get("/forgot-password", response_class=HTMLResponse)

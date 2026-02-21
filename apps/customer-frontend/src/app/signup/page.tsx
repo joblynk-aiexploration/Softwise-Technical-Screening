@@ -15,10 +15,11 @@ const page = async ({
 }) => {
   const q = await searchParams;
   const status = typeof q.status === 'string' ? q.status : '';
+  const ref = typeof q.ref === 'string' ? q.ref : '';
 
   return (
     <main className="bg-background-3 dark:bg-background-7">
-      <SignupHero status={status} />
+      <SignupHero status={status} refCode={ref} />
       <CTA
         className="dark:bg-background-6 bg-white"
         badgeClass="badge-yellow-v2"
