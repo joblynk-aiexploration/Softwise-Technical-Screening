@@ -72,9 +72,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST secret}"
-          : "${PROD_SSH_USER:?Missing PROD_SSH_USER secret}"
-          : "${PROD_SSH_KEY:?Missing PROD_SSH_KEY secret}"
+          missing=()
+          [ -n "${PROD_SSH_HOST}" ] || missing+=("PROD_SSH_HOST")
+          [ -n "${PROD_SSH_USER}" ] || missing+=("PROD_SSH_USER")
+          [ -n "${PROD_SSH_KEY}" ] || missing+=("PROD_SSH_KEY")
+
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "Missing required production environment secrets: ${missing[*]}" >&2
+            exit 1
+          fi
+
           if [ -z "${PROD_SSH_PORT}" ]; then
             echo "PROD_SSH_PORT=22" >> "$GITHUB_ENV"
           fi
