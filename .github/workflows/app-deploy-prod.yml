@@ -1,5 +1,5 @@
 name: Deploy JobLynk App to Production
-# trigger: keep workflow file touched for manual redeploys
+# trigger: keep workflow file touched for manual redeploys (ownership fix redeploy)
 
 on:
   push:
