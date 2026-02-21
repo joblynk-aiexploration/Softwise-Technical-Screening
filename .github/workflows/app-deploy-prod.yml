@@ -121,13 +121,13 @@ jobs:
             $SUDO bash -lc "cd '$DEPLOY_PATH' && git fetch origin main && git checkout main && git reset --hard origin/main"
 
             # Frontend
-            $SUDO bash -lc "export NVM_DIR=/root/.nvm; [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"; command -v npm >/dev/null 2>&1 || { echo 'npm not found'; exit 127; }; cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm install --include=dev"
-            $SUDO bash -lc "export NVM_DIR=/root/.nvm; [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"; command -v npm >/dev/null 2>&1 || { echo 'npm not found'; exit 127; }; cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_OPTIONS=--max-old-space-size=4096 npm run build"
-            $SUDO bash -lc "export NVM_DIR=/root/.nvm; [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"; command -v pm2 >/dev/null 2>&1 || { echo 'pm2 not found'; exit 127; }; pm2 restart customer-frontend --update-env"
+            $SUDO bash -lc "export NVM_DIR=/root/.nvm; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"; command -v npm >/dev/null 2>&1 || { echo 'npm not found'; exit 127; }; cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm install --include=dev"
+            $SUDO bash -lc "export NVM_DIR=/root/.nvm; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"; command -v npm >/dev/null 2>&1 || { echo 'npm not found'; exit 127; }; cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_OPTIONS=--max-old-space-size=4096 npm run build"
+            $SUDO bash -lc "export NVM_DIR=/root/.nvm; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"; command -v pm2 >/dev/null 2>&1 || { echo 'pm2 not found'; exit 127; }; pm2 restart customer-frontend --update-env"
 
             # Talent backend
             $SUDO bash -lc "cd '$DEPLOY_PATH/voice-call-agent' && if [ -d venv ]; then . venv/bin/activate; fi && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi"
-            $SUDO bash -lc "export NVM_DIR=/root/.nvm; [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"; command -v pm2 >/dev/null 2>&1 || { echo 'pm2 not found'; exit 127; }; pm2 restart screening-talent --update-env"
+            $SUDO bash -lc "export NVM_DIR=/root/.nvm; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"; command -v pm2 >/dev/null 2>&1 || { echo 'pm2 not found'; exit 127; }; pm2 restart screening-talent --update-env"
 
             # Basic health checks
             curl -fsS https://screening.joblynk.ai/ >/dev/null
