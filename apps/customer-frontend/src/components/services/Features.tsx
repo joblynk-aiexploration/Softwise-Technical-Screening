@@ -12,15 +12,15 @@ import LinkButton from '../ui/button/LinkButton';
 const featuresListData = [
   {
     id: 'feature-1',
-    text: 'Add a feature section about the product.',
+    text: 'AI voice screening with structured, role-specific interview flows.',
   },
   {
     id: 'feature-2',
-    text: 'Add a feature section about the product.',
+    text: 'Candidate scoring, notes, and summaries synced to your hiring pipeline.',
   },
   {
     id: 'feature-3',
-    text: 'Single upfront payment.',
+    text: 'Secure workflows with audit-ready logs and recruiter collaboration tools.',
   },
 ];
 
@@ -47,7 +47,7 @@ const Features = ({
                 <span className={cn('badge badge-yellow-v2 mb-5', badgeClassName)}>Feature</span>
               </RevealAnimation>
               <RevealAnimation delay={0.2}>
-                <h2 className="mx-auto mb-8 max-w-[520px] lg:mx-0">Streamline your business operations.</h2>
+                <h2 className="mx-auto mb-8 max-w-[520px] lg:mx-0">Streamline hiring operations from first screen to final shortlist.</h2>
               </RevealAnimation>
               <ul className="mb-14 space-y-4">
                 {featuresListData.map((feature, index) => (
@@ -106,13 +106,13 @@ const Features = ({
                         <Image src={authorAvatarBg} alt="avatar" className="absolute top-0 left-0 -z-10" />
                       </figure>
                       <div>
-                        <h5 className="text-secondary dark:text-accent">Curious george</h5>
-                        <p className="text-secondary/60 dark:text-accent/60">UI UX designer</p>
+                        <h5 className="text-secondary dark:text-accent">Candidate: Priya N.</h5>
+                        <p className="text-secondary/60 dark:text-accent/60">Senior Product Designer</p>
                       </div>
                     </div>
                     <div className="bg-secondary/10 dark:bg-accent/10 mb-7 h-[1px] w-full" />
                     <div className="flex items-center justify-between">
-                      <p className="text-secondary/60 dark:text-accent/60 text-tagline-2 font-medium">1 days Ago</p>
+                      <p className="text-secondary/60 dark:text-accent/60 text-tagline-2 font-medium">Interviewed 1 day ago</p>
                       <svg width={18} height={16} viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                           d="M9.34462 13.401L13.2849 15.8974C13.7886 16.2165 14.4139 15.7419 14.2644 15.154L13.126 10.6756C13.0939 10.5509 13.0977 10.4197 13.137 10.297C13.1762 10.1743 13.2492 10.0652 13.3477 9.98222L16.8811 7.04132C17.3453 6.6549 17.1057 5.88439 16.5092 5.84567L11.8949 5.5462C11.7706 5.53732 11.6514 5.49332 11.5511 5.41931C11.4509 5.34531 11.3737 5.24435 11.3286 5.12819L9.60765 0.794357C9.56087 0.671064 9.47769 0.564919 9.36915 0.490017C9.26062 0.415115 9.13187 0.375 9 0.375C8.86813 0.375 8.73938 0.415115 8.63085 0.490017C8.52232 0.564919 8.43914 0.671064 8.39236 0.794357L6.6714 5.12819C6.6263 5.24435 6.54914 5.34531 6.4489 5.41931C6.34865 5.49332 6.22944 5.53732 6.10515 5.5462L1.49078 5.84567C0.894294 5.88439 0.654664 6.6549 1.11894 7.04132L4.65232 9.98222C4.75079 10.0652 4.82383 10.1743 4.86305 10.297C4.90226 10.4197 4.90606 10.5509 4.874 10.6756L3.81824 14.8288C3.63889 15.5343 4.38929 16.1038 4.99369 15.7209L8.65539 13.401C8.75837 13.3354 8.87792 13.3006 9 13.3006C9.12208 13.3006 9.24163 13.3354 9.34462 13.401Z"
@@ -202,8 +202,8 @@ const Features = ({
                     />
                   </div>
                   <div>
-                    <h5 className="text-accent mb-1">Mischievous</h5>
-                    <p className="text-accent/60">UI UX designer</p>
+                    <h5 className="text-accent mb-1">Hiring Team</h5>
+                    <p className="text-accent/60">Recruiter · Hiring Manager · Technical Lead</p>
                   </div>
                 </div>
               </div>

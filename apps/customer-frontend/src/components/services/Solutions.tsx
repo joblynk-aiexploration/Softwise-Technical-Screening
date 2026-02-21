@@ -9,9 +9,9 @@ import RevealAnimation from '../animation/RevealAnimation';
 import LinkButton from '../ui/button/LinkButton';
 
 const solutionsData = [
-  { id: 1, text: 'On Demand Support' },
-  { id: 2, text: 'Information Sharing' },
-  { id: 3, text: 'Cloud Technology' },
+  { id: 1, text: 'On-demand recruiter support' },
+  { id: 2, text: 'Shared interviewer feedback workflows' },
+  { id: 3, text: 'Cloud-native hiring infrastructure' },
 ];
 
 const Solutions = () => {
@@ -26,12 +26,12 @@ const Solutions = () => {
               </RevealAnimation>
               <div className="mx-auto max-w-[595px] space-y-3 lg:mx-0">
                 <RevealAnimation delay={0.2}>
-                  <h2>Ensure strong solutions are available at all times</h2>
+                  <h2>Build resilient hiring workflows that scale with your team</h2>
                 </RevealAnimation>
                 <RevealAnimation delay={0.3}>
                   <p>
-                    Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text. It&apos;s not
-                    Latin though it looks like nothing.
+                    From candidate intake to interview scheduling and final evaluation, JobLynk helps teams reduce
+                    bottlenecks, improve hiring quality, and maintain a consistent experience for every applicant.
                   </p>
                 </RevealAnimation>
               </div>
@@ -63,7 +63,7 @@ const Solutions = () => {
                 <LinkButton
                   href="/login"
                   className="btn btn-xl dark:btn-transparent hover:btn-primary btn-secondary w-[90] sm:w-auto">
-                  Get started
+Start hiring smarter
                 </LinkButton>
               </div>
             </RevealAnimation>

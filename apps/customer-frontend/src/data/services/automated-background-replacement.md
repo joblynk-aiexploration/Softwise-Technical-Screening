@@ -1,6 +1,6 @@
 ---
-title: 'Automated Background Replacement'
-description: 'Instantly replace or enhance image backgrounds with AI-powered precision — perfect for product photos, portraits, and creative visuals.'
+title: 'AI Candidate Pre-Screening'
+description: 'Automate first-round candidate screening with voice AI interviews, consistent evaluation criteria, and recruiter-ready summaries.'
 image: '/images/ns-img-10.svg'
 imgAlt: 'service-img'
 imageDark: '/images/ns-img-dark-6.svg'

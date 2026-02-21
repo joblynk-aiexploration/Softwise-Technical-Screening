@@ -1,6 +1,6 @@
 ---
-title: 'Big Data Consulting'
-description: 'Unlock the power of big data with tailored consulting services that help businesses harness data for smarter decisions, improved performance, and long-term growth.'
+title: 'Hiring Analytics & Reporting'
+description: 'Turn interview data into hiring insights with conversion metrics, funnel analytics, and performance dashboards.'
 image: '/images/ns-img-12.svg'
 imageDark: '/images/ns-img-dark-8.svg'
 imgAlt: 'service-img'

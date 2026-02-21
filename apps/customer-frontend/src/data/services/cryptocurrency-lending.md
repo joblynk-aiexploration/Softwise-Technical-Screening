@@ -1,6 +1,6 @@
 ---
-title: 'Cryptocurrency Lending'
-description: 'A secure and efficient way for individuals and businesses to lend or borrow digital assets, earn interest, and access liquidity without traditional banks.'
+title: 'Candidate Engagement Automation'
+description: 'Improve response rates with smart follow-ups, scheduling reminders, and personalized candidate communication.'
 icon: 'ns-shape-9'
 image: '/images/ns-img-10.svg'
 imgAlt: 'service-img'

@@ -24,45 +24,45 @@ interface PricingCard {
 
 const pricingData: PricingCard[] = [
   {
-    id: 'simplified',
-    title: 'Simplified',
-    description: 'For individuals and small teams with unlimited trial access.',
-    monthlyPrice: '19.00',
-    yearlyPrice: '230.00',
+    id: 'starter',
+    title: 'Starter',
+    description: 'Best for growing teams that need structured screening and faster shortlisting.',
+    monthlyPrice: '49.00',
+    yearlyPrice: '470.00',
     isFeatured: false,
     features: [
-      { id: 'single-payment', text: 'Single Payment', isActive: true },
-      { id: 'selling-your-own-items', text: 'Selling your own items', isActive: false },
-      { id: 'powerful-integration', text: 'Powerful integration', isActive: false },
+      { id: 'voice-screening', text: 'AI voice screening interviews', isActive: true },
+      { id: 'candidate-notes', text: 'Candidate notes and scorecards', isActive: true },
+      { id: 'team-collab', text: 'Team collaboration workflows', isActive: false },
     ],
   },
   {
-    id: 'basic',
-    title: 'Basic',
-    description: 'For individuals and small teams with unlimited trial access.',
-    monthlyPrice: '37.00',
-    yearlyPrice: '4420.00',
+    id: 'growth',
+    title: 'Growth',
+    description: 'For hiring teams running multi-role pipelines and high applicant volumes.',
+    monthlyPrice: '129.00',
+    yearlyPrice: '1238.00',
     isFeatured: true,
     features: [
-      { id: 'unlimited-bandwidth', text: 'Unlimited Bandwidth', isActive: true },
-      { id: 'promotional-tools', text: 'Promotional Tools', isActive: true },
-      { id: 'single-payment', text: 'Single Payment', isActive: true },
-      { id: 'single-payment', text: 'Single Payment', isActive: true },
-      { id: 'selling-your-own-items', text: 'Selling your own items', isActive: false },
-      { id: 'powerful-integration', text: 'Powerful integration', isActive: false },
+      { id: 'unlimited-interviews', text: 'High-volume interview automation', isActive: true },
+      { id: 'analytics', text: 'Hiring analytics and funnel tracking', isActive: true },
+      { id: 'integrations', text: 'ATS and webhook integrations', isActive: true },
+      { id: 'priority-support', text: 'Priority onboarding support', isActive: true },
+      { id: 'sso', text: 'Single Sign-On (SSO)', isActive: false },
+      { id: 'custom-sla', text: 'Custom enterprise SLA', isActive: false },
     ],
   },
   {
-    id: 'enhanced',
-    title: 'Enhanced',
-    description: 'For individuals and small teams with unlimited trial access.',
-    monthlyPrice: '37.00',
-    yearlyPrice: '4420.00',
+    id: 'enterprise',
+    title: 'Enterprise',
+    description: 'For organizations needing compliance controls, custom workflows, and scale.',
+    monthlyPrice: '299.00',
+    yearlyPrice: '2870.00',
     isFeatured: false,
     features: [
-      { id: 'selling-on-your-own-conditions', text: 'Selling on your own conditions', isActive: true },
-      { id: 'seamless-integrations', text: 'Seamless integrations', isActive: true },
-      { id: 'real-time-streaming', text: 'Real-time streaming', isActive: false },
+      { id: 'compliance', text: 'Advanced compliance and audit logs', isActive: true },
+      { id: 'workflow-custom', text: 'Custom interview workflow design', isActive: true },
+      { id: 'dedicated-manager', text: 'Dedicated customer success manager', isActive: true },
     ],
   },
 ];
@@ -77,7 +77,7 @@ const Pricing = () => {
             <span className="badge badge-yellow-v2 mb-5">Our Pricing</span>
           </RevealAnimation>
           <RevealAnimation delay={0.2}>
-            <h2 className="mx-auto mb-8 max-w-[650px]">Select the pricing plan that best suits your needs.</h2>
+            <h2 className="mx-auto mb-8 max-w-[650px]">Choose a JobLynk plan that matches your hiring goals and growth stage.</h2>
           </RevealAnimation>
           <RevealAnimation delay={0.3}>
             <div className="dark:bg-background-7 relative rounded-[160px] bg-white px-14 py-6">
@@ -133,7 +133,7 @@ const Pricing = () => {
                           ? 'btn-secondary dark:btn-accent hover:btn-primary'
                           : 'btn-white dark:btn-white-dark hover:btn-secondary dark:hover:btn-accent',
                       )}>
-                      Get started
+    Talk to sales
                     </Link>
                     <ul className="relative list-none space-y-2.5">
                       {card.features.map((feature) => {

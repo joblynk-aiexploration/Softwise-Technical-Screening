@@ -1,6 +1,6 @@
 ---
-title: 'Batch Image Processing'
-description: 'Process thousands of images simultaneously with AI-powered batch automation — saving time, improving consistency, and boosting productivity.'
+title: 'High-Volume Interview Automation'
+description: 'Run structured interviews at scale for multiple roles while maintaining consistent scoring and candidate experience.'
 image: '/images/ns-img-11.svg'
 imageDark: '/images/ns-img-dark-7.svg'
 imgAlt: 'service-img'

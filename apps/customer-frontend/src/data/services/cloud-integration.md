@@ -1,6 +1,6 @@
 ---
-title: 'Cloud Integration'
-description: 'Enable seamless connectivity between applications, platforms, and data systems with secure and scalable cloud integration services.'
+title: 'ATS & Workflow Integrations'
+description: 'Connect JobLynk with your ATS, HRIS, and internal tools to sync candidate data and reduce manual work.'
 image: '/images/ns-img-12.svg'
 imageDark: '/images/ns-img-dark-8.svg'
 imgAlt: 'service-img'

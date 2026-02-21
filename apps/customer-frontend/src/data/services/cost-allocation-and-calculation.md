@@ -1,6 +1,6 @@
 ---
-title: 'Cost Allocation & Calculation'
-description: 'Gain financial clarity with cost allocation and calculation services that ensure transparency, optimize resource use, and support smarter decision-making across your organization.'
+title: 'Recruitment Cost Optimization'
+description: 'Track cost-per-hire, source performance, and recruiter productivity to optimize hiring budgets and ROI.'
 icon: 'ns-shape-23'
 image: '/images/ns-img-10.svg'
 imgAlt: 'service-img'

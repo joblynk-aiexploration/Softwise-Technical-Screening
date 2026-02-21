@@ -1,6 +1,6 @@
 ---
-title: 'Business Analysis'
-description: 'Business analysis helps organizations identify needs, optimize processes, and implement data-driven solutions that drive efficiency and growth.'
+title: 'Role & Interview Strategy'
+description: 'Design role-specific interview frameworks, competency maps, and scoring rubrics aligned to hiring goals.'
 icon: 'ns-shape-30'
 image: '/images/ns-img-13.svg'
 imageDark: '/images/ns-img-dark-9.svg'

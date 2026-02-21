@@ -15,12 +15,12 @@ const Services = () => {
           </RevealAnimation>
           <div className="space-y-3">
             <RevealAnimation delay={0.3}>
-              <h2 className="mx-auto max-w-[878px]">Leading companies around the globe rely on nexSaas.</h2>
+              <h2 className="mx-auto max-w-[878px]">Modern hiring teams use JobLynk to automate screening, interview faster, and hire better talent.</h2>
             </RevealAnimation>
             <RevealAnimation delay={0.4}>
               <p className="mx-auto max-w-[700px]">
-                Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text. It&apos;s not
-                Latin, though it looks like it, and it actually has no meaning.
+                Our services are built for high-volume recruiting teams that need consistent candidate evaluation,
+                faster decision-making, and a better applicant experience across every stage of the hiring funnel.
               </p>
             </RevealAnimation>
           </div>

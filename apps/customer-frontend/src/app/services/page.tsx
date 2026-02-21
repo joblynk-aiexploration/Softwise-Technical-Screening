@@ -8,7 +8,9 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   ...defaultMetadata,
-  title: 'Services | Joblynk Talent',
+  title: 'Hiring Services & Interview Automation | JobLynk Talent',
+  description:
+    'Explore JobLynk services for AI candidate screening, interview automation, ATS integrations, hiring analytics, and recruiting operations support built for modern talent teams.',
 };
 
 const page = () => {
@@ -21,11 +23,11 @@ const page = () => {
       <CTA
         className="dark:bg-background-6 bg-white"
         badgeClass="hidden"
-        ctaHeading="Build a complete website using the"
-        spanText="assistance"
-        description="Start your free trial today and see your ideas come to life easily and creatively."
+        ctaHeading="Ready to modernize your hiring process with"
+        spanText="JobLynk"
+        description="Book a demo to see how JobLynk helps your team screen candidates faster, improve interview consistency, and make data-driven hiring decisions."
         btnClass="hover:btn-secondary dark:hover:btn-accent"
-        ctaBtnText="Get started"
+        ctaBtnText="Book a demo"
       />
     </main>
   );

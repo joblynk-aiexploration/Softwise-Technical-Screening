@@ -1,6 +1,6 @@
 ---
-title: 'Business Continuity Management'
-description: 'Protect your organization from disruptions with comprehensive business continuity management services that ensure resilience, minimize downtime, and maintain critical operations.'
+title: 'Recruiting Operations Reliability'
+description: 'Keep your hiring pipeline running with resilient workflows, fallback processes, and operational monitoring.'
 image: '/images/ns-img-12.svg'
 imageDark: '/images/ns-img-dark-8.svg'
 imgAlt: 'service-img'
