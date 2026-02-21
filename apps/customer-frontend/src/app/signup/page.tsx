@@ -8,10 +8,17 @@ export const metadata: Metadata = {
   title: 'Signup | Joblynk Talent',
 };
 
-const page = () => {
+const page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) => {
+  const q = await searchParams;
+  const status = typeof q.status === 'string' ? q.status : '';
+
   return (
     <main className="bg-background-3 dark:bg-background-7">
-      <SignupHero />
+      <SignupHero status={status} />
       <CTA
         className="dark:bg-background-6 bg-white"
         badgeClass="badge-yellow-v2"

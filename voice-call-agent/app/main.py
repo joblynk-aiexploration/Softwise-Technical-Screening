@@ -1583,6 +1583,38 @@ button{{width:100%;margin-top:12px;background:#0b5fff;color:#fff;border:none;bor
     return HTMLResponse(html_doc, headers={"Cache-Control": "no-store"})
 
 
+@app.get("/signup", response_class=HTMLResponse)
+def signup_page(status: str = ""):
+    target = "/signup?status=created" if status == "created" else ("/signup?status=error" if status == "error" else "/signup")
+    return RedirectResponse(url=target, status_code=307)
+
+
+@app.post("/signup")
+def signup_submit(
+    request: Request,
+    username: str = Form(default=""),
+    email: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...),
+):
+    ip = _request_ip(request)
+    if _is_rate_limited(f"signup:{ip}", limit=8, window_seconds=900):
+        return RedirectResponse(url="/signup?status=error", status_code=303)
+
+    target = (email or "").strip().lower()
+    pwd = password or ""
+    cpwd = confirm_password or ""
+    if not target or len(pwd) < 10 or pwd != cpwd:
+        return RedirectResponse(url="/signup?status=error", status_code=303)
+
+    _save_auth_config(target, pwd)
+    log_event(f"SIGNUP_CREATED email={target} name={(username or '').strip()[:80]}")
+
+    resp = RedirectResponse(url="/ui", status_code=303)
+    resp.set_cookie(APP_SESSION_COOKIE, _session_token(target), httponly=True, samesite="lax", secure=False, path="/")
+    return resp
+
+
 @app.get("/forgot-password", response_class=HTMLResponse)
 def forgot_password_page(msg: str = ""):
     target = "/forgot-password?msg=sent" if msg == "sent" else "/forgot-password"
