@@ -37,6 +37,8 @@ jobs:
 
       - name: Build frontend
         working-directory: apps/customer-frontend
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
       - name: Setup Python
@@ -87,7 +89,7 @@ jobs:
             # Frontend
             cd "$DEPLOY_PATH/apps/customer-frontend"
             NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm install --include=dev
-            npm run build
+            NODE_OPTIONS=--max-old-space-size=4096 npm run build
             pm2 restart customer-frontend --update-env
 
             # Talent backend
