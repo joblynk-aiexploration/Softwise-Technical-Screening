@@ -14,7 +14,7 @@ const Hero = () => {
             <RevealAnimation delay={0.2}>
               <h1 className="font-normal">
                 Stay <span className="text-primary-500">updated</span> with the latest <br />
-                from NextSaaS
+                from JobLynk
               </h1>
             </RevealAnimation>
             <RevealAnimation delay={0.3}>

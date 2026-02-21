@@ -5,7 +5,7 @@ const CareerDetailsHeading = () => {
     <div className="text-center space-y-3 mb-[70px]">
       <RevealAnimation delay={0.3}>
         <h2>
-          We&apos;re building the future of NextSaaS— <br className="hidden md:block" />
+          We&apos;re building the future of JobLynk— <br className="hidden md:block" />
           come build It with us.
         </h2>
       </RevealAnimation>

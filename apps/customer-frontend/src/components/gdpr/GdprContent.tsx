@@ -65,7 +65,7 @@ const GdprContent = () => {
 
   // Data collection purposes
   const dataPurposes: ListItem[] = [
-    { id: 'account-management', text: 'To create and manage your NextSaaS account' },
+    { id: 'account-management', text: 'To create and manage your JobLynk account' },
     { id: 'order-processing', text: 'To process orders, generate invoices, and prevent fraudulent transactions' },
     { id: 'personalization', text: 'To improve your experience on our site through personalized content' },
     { id: 'analytics', text: 'To analyze site traffic and optimize marketing efforts' },
@@ -99,7 +99,7 @@ const GdprContent = () => {
     { id: 'update-profile', text: 'You can update your profile details anytime from your account dashboard.' },
     {
       id: 'data-deletion',
-      text: 'To request a complete data deletion or data export, simply send an email to: support@nextsaas.com',
+      text: 'To request a complete data deletion or data export, simply send an email to: support@joblynk.com',
     },
   ];
 
@@ -110,14 +110,14 @@ const GdprContent = () => {
           {/* gdrp  */}
           <RevealAnimation delay={0.3}>
             <div className="space-y-3">
-              <h2>NextSaaS and the general data protection regulation (GDPR)</h2>
+              <h2>JobLynk and the general data protection regulation (GDPR)</h2>
               <p>
                 The General Data Protection Regulation (GDPR) is a privacy regulation enacted by the European Union (EU)
                 to strengthen the protection of individuals&apos; data. It became enforceable on May 25, 2018, and
                 applies to any company that handles the data of EU citizens, no matter where the company is based.
                 <br />
                 <br />
-                This page explains how NextSaaS implements GDPR principles and ensures that your data is handled
+                This page explains how JobLynk implements GDPR principles and ensures that your data is handled
                 transparently, securely, and respectfully.
               </p>
             </div>
@@ -128,7 +128,7 @@ const GdprContent = () => {
               <div className="space-y-3">
                 <h3 className="text-heading-4">Purpose of this document</h3>
                 <p>
-                  At NextSaaS, we are fully committed to respecting your privacy. This page provides a clear overview
+                  At JobLynk, we are fully committed to respecting your privacy. This page provides a clear overview
                   of:
                 </p>
               </div>
@@ -148,21 +148,21 @@ const GdprContent = () => {
               <h3 className="text-heading-4">What is GDPR?</h3>
               <p>
                 In simple terms, GDPR gives you greater control over your personal information. Service providers (like
-                NextSaaS) must be transparent about what data they collect, how they use it, and how they share it — and
+                JobLynk) must be transparent about what data they collect, how they use it, and how they share it — and
                 users must have full rights to access, modify, or delete their data.
                 <br />
                 <br />
                 Although GDPR is an EU regulation, it affects any business that collects or processes the data of EU
-                residents, including NextSaaS.
+                residents, including JobLynk.
               </p>
             </div>
           </RevealAnimation>
-          {/* How NextSaaS Implements GDPR */}
+          {/* How JobLynk Implements GDPR */}
           <RevealAnimation delay={0.3}>
             <div className="space-y-3">
-              <h3 className="text-heading-4">How NextSaaS Implements GDPR</h3>
+              <h3 className="text-heading-4">How JobLynk Implements GDPR</h3>
               <p>
-                NextSaaS has always prioritized user data privacy, even before GDPR came into effect. Our core practices
+                JobLynk has always prioritized user data privacy, even before GDPR came into effect. Our core practices
                 naturally align with GDPR principles, and we&apos;ve made further improvements to ensure full
                 compliance.
               </p>
@@ -263,7 +263,7 @@ const GdprContent = () => {
                       {item.id === 'data-deletion' ? (
                         <>
                           To request a complete data deletion or data export, simply send an email to:{' '}
-                          <span className="text-secondary dark:text-accent">support@nextsaas.com</span>
+                          <span className="text-secondary dark:text-accent">support@joblynk.com</span>
                         </>
                       ) : (
                         item.text

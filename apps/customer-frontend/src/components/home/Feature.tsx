@@ -23,7 +23,7 @@ const Feature = () => {
             </RevealAnimation>
             <RevealAnimation delay={0.4}>
               <p className="text-secondary/60 dark:text-accent/60 mx-auto max-w-[600px]">
-                Powerful tools to streamline operations and boost efficiency. Automate tasks with NextSaaS and focus on
+                Powerful tools to streamline operations and boost efficiency. Automate tasks with JobLynk and focus on
                 what matters.
               </p>
             </RevealAnimation>

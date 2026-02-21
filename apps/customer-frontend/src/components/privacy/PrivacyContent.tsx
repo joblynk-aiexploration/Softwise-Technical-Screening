@@ -131,7 +131,7 @@ const rightsSection: ListSection = {
     { content: 'You have the right to access, update, or delete your personal information.' },
     {
       content:
-        'If you wish to exercise these rights, please contact us at <a href="mailto:support@nextsaas.com" class="text-secondary dark:text-accent">support@nextsaas.com</a>',
+        'If you wish to exercise these rights, please contact us at <a href="mailto:support@joblynk.com" class="text-secondary dark:text-accent">support@joblynk.com</a>',
     },
   ],
 };
@@ -169,8 +169,8 @@ const PrivacyContent = () => {
             </RevealAnimation>
             <RevealAnimation delay={0.2}>
               <p>
-                <span className="text-secondary dark:text-accent">NextSaaS</span> is a product operated by
-                <span className="text-secondary dark:text-accent">NextSaaS Technologies LLC</span>. We specialize in
+                <span className="text-secondary dark:text-accent">JobLynk</span> is a product operated by
+                <span className="text-secondary dark:text-accent">JobLynk Technologies LLC</span>. We specialize in
                 property management solutions, empowering businesses worldwide to streamline their operations
                 efficiently. We are committed to protecting your privacy and handling your information transparently.
               </p>
@@ -180,12 +180,12 @@ const PrivacyContent = () => {
           {/* Policy Intro */}
           <RevealAnimation delay={0.3}>
             <div className="space-y-2">
-              <h4>NextSaaS privacy policy</h4>
+              <h4>JobLynk privacy policy</h4>
               <p>
                 This Privacy Policy describes how your personal information is collected, used, and shared when you
                 visit, subscribe, register, or make a purchase from
-                <Link href="https://nextsaas.com" className="text-secondary dark:text-accent">
-                  https://nextsaas.com
+                <Link href="https://joblynk.com" className="text-secondary dark:text-accent">
+                  https://joblynk.com
                 </Link>
                 (the &quot;Site&quot;).
               </p>

@@ -96,7 +96,7 @@ const Pricing = () => {
             <p className="mb-5 md:mb-7">
               Flexible, transparent pricing for businesses of every size and stage.
               <br className="hidden lg:block" />
-              Choose a plan that scales with you. Whether you’re a startup or an enterprise, NextSaaS offers pricing
+              Choose a plan that scales with you. Whether you’re a startup or an enterprise, JobLynk offers pricing
               options that fit your goals and budget.
             </p>
           </RevealAnimation>

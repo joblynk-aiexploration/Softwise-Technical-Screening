@@ -9,8 +9,8 @@ const DocsContent = () => {
       <div className="main-container mb-[70px]">
         <RevealAnimation delay={0.1}>
           <div className="space-y-3 text-center">
-            <h2>Welcome to the NextSaaS documentation</h2>
-            <p>Find everything you need to set up, customize, and master your NextSaaS platform.</p>
+            <h2>Welcome to the JobLynk documentation</h2>
+            <p>Find everything you need to set up, customize, and master your JobLynk platform.</p>
           </div>
         </RevealAnimation>
       </div>
@@ -32,7 +32,7 @@ const DocsContent = () => {
                       <Link
                         href="#"
                         className="hover:text-secondary dark:hover:text-accent transition-colors duration-500 ease-in-out">
-                        Introduction to NextSaaS
+                        Introduction to JobLynk
                       </Link>
                     </li>
                     <li>
@@ -176,7 +176,7 @@ const DocsContent = () => {
             <div className="space-y-6">
               <div className="space-y-2">
                 <h4>Settings &amp; customization</h4>
-                <p>Tailor NextSaaS to fit your business needs.</p>
+                <p>Tailor JobLynk to fit your business needs.</p>
               </div>
               <ul className="text-tagline-1 text-secondary/60 dark:text-accent/60 list-inside space-y-3 font-normal">
                 <li>

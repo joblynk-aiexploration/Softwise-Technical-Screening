@@ -51,11 +51,11 @@ const Navbar = () => {
               <Link href="/" className="inline-flex items-center">
                 <span className="sr-only">Home</span>
                 <figure className="hidden lg:block lg:max-w-[198px]">
-                  <Image src={mainLogo} alt="NextSaaS" className="h-auto w-full dark:invert" priority />
+                  <Image src={mainLogo} alt="JobLynk" className="h-auto w-full dark:invert" priority />
                 </figure>
                 <figure className="block max-w-[44px] lg:hidden">
-                  <Image src={logoIcon} alt="NextSaaS" className="block h-auto w-full dark:hidden" priority />
-                  <Image src={logoDark} alt="NextSaaS" className="hidden h-auto w-full dark:block" priority />
+                  <Image src={logoIcon} alt="JobLynk" className="block h-auto w-full dark:hidden" priority />
+                  <Image src={logoDark} alt="JobLynk" className="hidden h-auto w-full dark:block" priority />
                 </figure>
               </Link>
             </div>

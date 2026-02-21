@@ -21,7 +21,7 @@ const Projects = () => {
             </RevealAnimation>
             <RevealAnimation delay={0.4}>
               <p className="mx-auto max-w-[680px]">
-                Discover how NextSaaS is transforming businesses with tailored automation strategies. Explore our
+                Discover how JobLynk is transforming businesses with tailored automation strategies. Explore our
                 portfolio to see the real-world impact we&apos;ve made for clients across various industries.
               </p>
             </RevealAnimation>

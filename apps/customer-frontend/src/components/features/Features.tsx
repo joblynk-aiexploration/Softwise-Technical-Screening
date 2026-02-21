@@ -22,7 +22,7 @@ const Features = () => {
             </RevealAnimation>
             <RevealAnimation delay={0.4}>
               <p className="mx-auto max-w-[734px]">
-                NextSaaS simplifies finance with powerful tools designed for clarity, speed, and growth. Whether you’re
+                JobLynk simplifies finance with powerful tools designed for clarity, speed, and growth. Whether you’re
                 budgeting, forecasting, or tracking cash flow—our platform keeps you in control.
               </p>
             </RevealAnimation>

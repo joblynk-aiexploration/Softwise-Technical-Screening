@@ -1,6 +1,6 @@
-# NextSaaS - Software, SaaS & Startup Tailwind Template
+# JobLynk - Software, SaaS & Startup Tailwind Template
 
-NextSaaS - the ultimate collection of 38+ premium HTML templates for SaaS businesses and startups. Built with Tailwind CSS, featuring responsive design, authentication flows, pricing pages, and modern UI components. Perfect for web applications and digital products.
+JobLynk - the ultimate collection of 38+ premium HTML templates for SaaS businesses and startups. Built with Tailwind CSS, featuring responsive design, authentication flows, pricing pages, and modern UI components. Perfect for web applications and digital products.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.0.8-black)
 ![React](https://img.shields.io/badge/React-19.2.1-blue)
@@ -301,7 +301,7 @@ import { generateMetadata } from '@/utils/generateMetaData';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  ...generateMetadata('Portfolio - NextSaaS', 'Showcase of our amazing projects and work'),
+  ...generateMetadata('Portfolio - JobLynk', 'Showcase of our amazing projects and work'),
 };
 
 const PortfolioPage = () => {
@@ -512,7 +512,7 @@ Need help with deployment? Contact us at [hello@pixel71.com](mailto:hello@pixel7
 ## 📖 Documentation
 
 - [Development Guide](./DEVELOPMENT.md) - Detailed development workflow
-- [Component Documentation](https://nextsaas-documentation.vercel.app/nextjs/get-started) - Usage guide
+- [Component Documentation](https://joblynk-documentation.vercel.app/nextjs/get-started) - Usage guide
 
 ## 📧 Support & Contact
 

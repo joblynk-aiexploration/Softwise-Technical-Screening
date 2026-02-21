@@ -14,7 +14,7 @@ const CTA = () => {
           </RevealAnimation>
           <RevealAnimation>
             <p className="mb-6 text-white/60">
-              Start your aI journey with NextSaaS and transform the way you work—forever.
+              Start your aI journey with JobLynk and transform the way you work—forever.
             </p>
           </RevealAnimation>
           <RevealAnimation>

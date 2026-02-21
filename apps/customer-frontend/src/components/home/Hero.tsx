@@ -164,7 +164,7 @@ const Hero = () => {
           </RevealAnimation>
           <RevealAnimation delay={0.3}>
             <p className="mx-auto mb-6 max-w-[650px]">
-              &nbsp;Save time and elevate your business with intelligent workflow automation from NextSaaS.
+              &nbsp;Save time and elevate your business with intelligent workflow automation from JobLynk.
             </p>
           </RevealAnimation>
           <ul className="mb-14 flex w-fit list-none flex-col gap-4 md:mx-auto md:flex-row md:flex-wrap md:items-center md:justify-center md:gap-9 lg:flex-nowrap">
@@ -215,7 +215,7 @@ const Hero = () => {
                 </RevealAnimation>
                 <RevealAnimation delay={0.3}>
                   <p className="max-w-[530px]">
-                    At NextSaaS, we leverage AI and strategic insight to enhance business performance. Partner with us
+                    At JobLynk, we leverage AI and strategic insight to enhance business performance. Partner with us
                     to unlock your potential.
                   </p>
                 </RevealAnimation>

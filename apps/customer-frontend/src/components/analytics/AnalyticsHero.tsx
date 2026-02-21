@@ -20,7 +20,7 @@ const AnalyticsHero = () => {
             </RevealAnimation>
             <RevealAnimation delay={0.4}>
               <p>
-                With NextSaaS, you don’t need a dozen tools to understand what’s working. Our intuitive dashboard
+                With JobLynk, you don’t need a dozen tools to understand what’s working. Our intuitive dashboard
                 centralizes your key metrics, helping you monitor performance, spot trends, and make smarter, faster
                 decisions.
               </p>

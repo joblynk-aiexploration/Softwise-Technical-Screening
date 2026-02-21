@@ -54,7 +54,7 @@ const Clients = () => {
       <div className="main-container">
         <div className="text-center">
           <RevealAnimation delay={0.1}>
-            <h2 className="text-heading-3">Transforming business success with NextSaaS</h2>
+            <h2 className="text-heading-3">Transforming business success with JobLynk</h2>
           </RevealAnimation>
         </div>
       </div>

@@ -1,5 +1,5 @@
 /* =========================
-NextSaaS Buttons Styles
+JobLynk Buttons Styles
 =========================== */
 @utility btn {
   @apply relative overflow-hidden border rounded-full cursor-pointer inline-block text-center transition-all duration-500 ease-in-out font-normal text-nowrap hover:scale-102 lowercase;

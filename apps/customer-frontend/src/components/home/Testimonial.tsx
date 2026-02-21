@@ -19,7 +19,7 @@ const Testimonial = () => {
           <RevealAnimation delay={0.3}>
             <p className="mx-auto max-w-[872px]">
               Trusted by businesses worldwide to drive efficiency, accuracy, and results. Hear from our clients how
-              NextSaaS helped them streamline operations, save time, and drive results through smart automation.
+              JobLynk helped them streamline operations, save time, and drive results through smart automation.
             </p>
           </RevealAnimation>
         </div>

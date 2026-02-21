@@ -22,7 +22,7 @@ export default function DemoShowcase({ activeDemoId }: Readonly<{ activeDemoId: 
     const fetchDemoList = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('https://nextsaas-api.vercel.app/api/nextjs-demo');
+        const response = await fetch('https://joblynk-api.vercel.app/api/nextjs-demo');
         if (!response.ok) {
           throw new Error('Failed to fetch demo list');
         }

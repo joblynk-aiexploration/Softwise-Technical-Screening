@@ -13,11 +13,11 @@ const VisionStatement = () => {
             <span className="badge badge-cyan mb-5">Passion meets purpose</span>
           </RevealAnimation>
           <RevealAnimation delay={0.3}>
-            <h2>NextSaaS is defining the future landscape of business.</h2>
+            <h2>JobLynk is defining the future landscape of business.</h2>
           </RevealAnimation>
           <RevealAnimation delay={0.4}>
             <p>
-              In a rapidly evolving digital world, NextSaaS stands at the forefront of innovation, transforming how
+              In a rapidly evolving digital world, JobLynk stands at the forefront of innovation, transforming how
               businesses operate, connect, and grow.By delivering intelligent, scalable, and user-focused SaaS
               solutions,
             </p>

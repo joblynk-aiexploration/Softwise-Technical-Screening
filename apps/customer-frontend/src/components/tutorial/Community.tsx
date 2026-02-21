@@ -30,7 +30,7 @@ const Community = () => {
       <div className="main-container">
         <div className="text-center space-y-3 mb-[70px]">
           <RevealAnimation delay={0.1}>
-            <h2>Join the NextSaaS community</h2>
+            <h2>Join the JobLynk community</h2>
           </RevealAnimation>
           <RevealAnimation delay={0.2}>
             <p>Ask questions, share solutions, and connect with other users around the world.</p>
