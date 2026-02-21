@@ -191,7 +191,17 @@ jobs:
             fi
             $PM2_USE_SUDO "$PM2_BIN" restart screening-talent --update-env
 
-            # Basic health checks
-            curl -fsS https://screening.joblynk.ai/ >/dev/null
-            curl -fsS https://screening.joblynk.ai/talent/login >/dev/null
+            # Basic health checks (allow warm-up after PM2 restarts)
+            ok_root=0
+            ok_talent=0
+            for i in $(seq 1 20); do
+              if curl -fsS https://screening.joblynk.ai/ >/dev/null; then ok_root=1; fi
+              if curl -fsS https://screening.joblynk.ai/talent/login >/dev/null; then ok_talent=1; fi
+              if [ "$ok_root" -eq 1 ] && [ "$ok_talent" -eq 1 ]; then
+                break
+              fi
+              sleep 3
+            done
+            [ "$ok_root" -eq 1 ] || { echo "Health check failed: /"; exit 1; }
+            [ "$ok_talent" -eq 1 ] || { echo "Health check failed: /talent/login"; exit 1; }
             echo "Production deployment completed successfully."
