@@ -1,0 +1,9 @@
+[submodule "agent-ai-exploration"]
+	path = agent-ai-exploration
+	url = https://github.com/joblynk-aiexploration/agent-ai-exploration.git
+[submodule "cms"]
+	path = cms
+	url = https://github.com/joblynk-aiexploration/joblynk-cms-core.git
+[submodule "communications"]
+	path = communications
+	url = https://github.com/joblynk-aiexploration/joblynk-communications-core.git
