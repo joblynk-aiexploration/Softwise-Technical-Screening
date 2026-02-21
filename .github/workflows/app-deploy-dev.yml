@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     env:
-      DEV_SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
-      DEV_SSH_USER: ${{ secrets.DEV_SSH_USER }}
-      DEV_SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
-      DEV_SSH_PORT: ${{ secrets.DEV_SSH_PORT || '22' }}
+      DEV_SSH_HOST: ${{ secrets.DEV_SSH_HOST || secrets.PROD_SSH_HOST }}
+      DEV_SSH_USER: ${{ secrets.DEV_SSH_USER || secrets.PROD_SSH_USER }}
+      DEV_SSH_KEY: ${{ secrets.DEV_SSH_KEY || secrets.PROD_SSH_KEY }}
+      DEV_SSH_PORT: ${{ secrets.DEV_SSH_PORT || secrets.PROD_SSH_PORT || '22' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
