@@ -100,7 +100,7 @@ jobs:
 
             DEPLOY_PATH="${{ secrets.PROD_DEPLOY_PATH }}"
             if [ -z "${DEPLOY_PATH}" ]; then
-              DEPLOY_PATH="/root/.openclaw/workspace"
+              DEPLOY_PATH="/apps/data/joblynktalent"
             fi
 
             if [ ! -d "$DEPLOY_PATH" ]; then
