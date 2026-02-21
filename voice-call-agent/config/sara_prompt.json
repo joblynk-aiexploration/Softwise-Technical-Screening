@@ -1,0 +1,8 @@
+{
+  "intro_template": "Hi {first_name}, this is {agent_name} from Softwise Solutions. I’m calling for a brief screening for the {job_title} role. Is this a good time to talk?",
+  "consent_yes_template": "Perfect, thank you. This {job_title} role focuses on {job_summary}. I’ll ask a few quick screening questions. First question: {first_question}",
+  "consent_retry": "Just to confirm, do you have a few minutes now for a short screening call?",
+  "consent_no": "No worries at all. Thanks for your time today. We can reconnect at a better time.",
+  "next_question_template": "Next question: {next_question}",
+  "wrap_up": "That’s all the questions I have for now. Thank you for your time and thoughtful responses. Our recruiting team will follow up with next steps shortly."
+}

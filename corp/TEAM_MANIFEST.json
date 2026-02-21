@@ -1,0 +1,9 @@
+{
+  "company": "JobLynk AI Exploration",
+  "domain": "AI Software Development House",
+  "leads": {
+    "adam": {"role": "CTO", "focus": "Architecture & Engineering"},
+    "sara": {"role": "CPO", "focus": "Product & UX"},
+    "andrea": {"role": "COO", "focus": "Operations & Scale"}
+  }
+}

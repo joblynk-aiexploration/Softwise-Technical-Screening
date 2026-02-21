@@ -1,0 +1,8 @@
+{
+  "intro_template": "Hi {first_name}, this is {agent_name}, an AI assistant designed to help recruiters screen candidates. Do you have a few minutes to speak right now?",
+  "consent_yes_template": "Great, thank you. The position is {job_title}. It focuses on {job_summary}. This is just a quick overview so you have context for the questions I’ll ask. First question: {first_question}",
+  "consent_retry": "Just to confirm, do you have a few minutes now for a short screening conversation?",
+  "consent_no": "No problem at all. Thank you for your time. We can reconnect at a better time.",
+  "next_question_template": "Thanks, that’s helpful. Next question: {next_question}",
+  "wrap_up": "That’s all the questions I have for you. Thank you for sharing your responses. Our recruitment team will reach out to you. If you have any further questions, you can email the recruiter you are working with from Softwise Solutions."
+}

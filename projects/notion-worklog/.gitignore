@@ -1,0 +1,6 @@
+__pycache__/
+.env
+config/notion_credentials.json
+config/notion_state.json
+
+*.deb

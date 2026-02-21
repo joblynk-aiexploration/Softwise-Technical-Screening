@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "services": [
+    {
+      "name": "core-vector-service",
+      "description": "Handles vector embeddings and semantic searches for AI-driven applications.",
+      "status": "in development",
+      "upcomingFeatures": [
+        "Implement caching for performance improvements",
+        "Support additional vector dimensions",
+        "Integrate with 'Agentic Workflows'"
+      ],
+      "futureExploration": [
+        "Research RAG Architectures for enhanced AI capabilities"
+      ]
+    }
+  ]
+}

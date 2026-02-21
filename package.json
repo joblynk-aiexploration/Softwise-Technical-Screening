@@ -1,0 +1,13 @@
+{
+  "name": "joblynk-tools",
+  "version": "1.0.0",
+  "description": "Utility scripts for Joblynk assistants",
+  "type": "module",
+  "scripts": {
+    "send-email": "node scripts/send_email.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.11",
+    "yargs": "^17.7.2"
+  }
+}

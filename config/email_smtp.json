@@ -1,0 +1,9 @@
+{
+  "provider": "gmail",
+  "smtp_server": "smtp.gmail.com",
+  "port": 587,
+  "use_starttls": true,
+  "username": "aclawbot@gmail.com",
+  "password": "qxad bids eiwk yklp",
+  "from_name": "Joblynk Adam"
+}
