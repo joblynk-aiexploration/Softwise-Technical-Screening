@@ -7,10 +7,10 @@ import Image from 'next/image';
 import RevealAnimation from '../animation/RevealAnimation';
 
 const featureList = [
-  { id: 1, icon: 'ns-shape-8', label: 'Analyze your data' },
-  { id: 2, icon: 'ns-shape-9', label: 'Collaborate securely' },
-  { id: 3, icon: 'ns-shape-12', label: 'Embedded analytics' },
-  { id: 4, icon: 'ns-shape-21', label: 'Easy & intuitive' },
+  { id: 1, icon: 'ns-shape-8', label: 'Structured interview scorecards' },
+  { id: 2, icon: 'ns-shape-9', label: 'Secure recruiter collaboration' },
+  { id: 3, icon: 'ns-shape-12', label: 'Pipeline and conversion analytics' },
+  { id: 4, icon: 'ns-shape-21', label: 'Fast, candidate-friendly workflows' },
 ];
 
 const WhyChooseUs = () => {
@@ -24,15 +24,15 @@ const WhyChooseUs = () => {
             </RevealAnimation>
             <RevealAnimation delay={0.3}>
               <h2 className="mb-3">
-                A highly effective
+                One unified platform for
                 <br className="hidden lg:block" />
-                unified platform
+                modern talent acquisition
               </h2>
             </RevealAnimation>
             <RevealAnimation delay={0.4}>
               <p className="lg:max-w-[536px]">
-                Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text nothing Before &amp;
-                After magazine.
+                JobLynk helps recruiting teams standardize screening, shorten hiring cycles, and align interviewers on
+                evidence-based decisions with clear candidate insights.
               </p>
             </RevealAnimation>
             <ul className="mt-10 sm:space-y-2 md:mt-14">

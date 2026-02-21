@@ -10,7 +10,9 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   ...defaultMetadata,
-  title: 'About Us | Joblynk Talent',
+  title: 'About JobLynk Talent | AI-Powered Hiring Platform',
+  description:
+    'Learn how JobLynk helps recruiting teams automate screening, improve candidate experience, and make faster data-driven hiring decisions.',
 };
 
 const page = () => {

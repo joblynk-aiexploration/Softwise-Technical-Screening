@@ -13,13 +13,12 @@ const VisionStatement = () => {
             <span className="badge badge-cyan mb-5">Passion meets purpose</span>
           </RevealAnimation>
           <RevealAnimation delay={0.3}>
-            <h2>JobLynk is defining the future landscape of business.</h2>
+            <h2>JobLynk is helping hiring teams build faster, fairer, and more consistent recruiting pipelines.</h2>
           </RevealAnimation>
           <RevealAnimation delay={0.4}>
             <p>
-              In a rapidly evolving digital world, JobLynk stands at the forefront of innovation, transforming how
-              businesses operate, connect, and grow.By delivering intelligent, scalable, and user-focused SaaS
-              solutions,
+              We combine AI interview automation, structured candidate evaluation, and recruiter-first workflows to help
+              organizations reduce time-to-hire, improve hiring quality, and deliver a better candidate experience.
             </p>
           </RevealAnimation>
         </div>

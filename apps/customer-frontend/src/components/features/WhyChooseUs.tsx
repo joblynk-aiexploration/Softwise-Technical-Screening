@@ -18,15 +18,15 @@ const WhyChooseUs = () => {
           </RevealAnimation>
           <RevealAnimation delay={0.2}>
             <h2 className="mb-3">
-              Easily manage your
+              Improve hiring outcomes with
               <br className="hidden lg:block" />
-              cash flow.
+              consistent interview intelligence.
             </h2>
           </RevealAnimation>
           <RevealAnimation delay={0.3}>
             <p className="lg:max-w-[536px]">
-              Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text nothing Before &amp;
-              After magazine.
+              JobLynk gives hiring teams the structure and visibility needed to evaluate candidates fairly, reduce
+              interview bottlenecks, and make faster decisions with confidence.
             </p>
           </RevealAnimation>
           <ul className="mt-8 space-y-1 lg:mt-14">
@@ -34,7 +34,7 @@ const WhyChooseUs = () => {
               <li className="flex list-none items-center gap-4 py-2">
                 <span className="ns-shape-8 text-secondary dark:text-accent text-[36px]"> </span>
                 <strong className="text-tagline-1 text-secondary dark:text-accent font-medium">
-                  A version for offline use is available.
+                  Role-specific interview flows for every job opening.
                 </strong>
               </li>
             </RevealAnimation>
@@ -42,7 +42,7 @@ const WhyChooseUs = () => {
               <li className="flex list-none items-center gap-4 py-2">
                 <span className="ns-shape-9 text-secondary dark:text-accent text-[36px]"> </span>
                 <strong className="text-tagline-1 text-secondary dark:text-accent font-medium">
-                  Designed to be both scalable and secure.
+                  Built to scale securely across recruiters, managers, and teams.
                 </strong>
               </li>
             </RevealAnimation>
@@ -50,7 +50,7 @@ const WhyChooseUs = () => {
               <li className="flex list-none items-center gap-4 py-2">
                 <span className="ns-shape-12 text-secondary dark:text-accent text-[36px]"> </span>
                 <strong className="text-tagline-1 text-secondary dark:text-accent font-medium">
-                  Feature powered by artificial intelligence.
+                  AI-generated summaries and scoring insights after every interview.
                 </strong>
               </li>
             </RevealAnimation>
@@ -58,7 +58,7 @@ const WhyChooseUs = () => {
               <li className="flex list-none items-center gap-4 py-2">
                 <span className="ns-shape-21 text-secondary dark:text-accent text-[36px]"> </span>
                 <strong className="text-tagline-1 text-secondary dark:text-accent font-medium">
-                  It offers both scalability and robust security.
+                  Audit-ready workflows with transparent candidate decision history.
                 </strong>
               </li>
             </RevealAnimation>

@@ -19,11 +19,11 @@ const AboutCTA = () => {
 
             <CTA
               className="py-[50px] md:py-20 lg:py-[100px]"
-              description="Start your free trial today and see your ideas come to life easily and creatively."
+              description="Discover how JobLynk can help your team automate screening, improve candidate quality, and reduce time-to-hire."
               headingClass="text-accent"
               descriptionClass="text-accent/60"
-              ctaHeading="  Build a complete website using the assistance"
-              ctaBtnText="Get started"
+              ctaHeading="Start hiring smarter with JobLynk"
+              ctaBtnText="Book a demo"
               badgeText="Get started"
               badgeClass="badge badge-blur text-ns-green"
               btnClass="hover:btn-white"

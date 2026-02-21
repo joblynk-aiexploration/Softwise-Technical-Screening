@@ -8,7 +8,9 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   ...defaultMetadata,
-  title: 'Pricing | Joblynk Talent',
+  title: 'JobLynk Pricing | Plans for Modern Recruiting Teams',
+  description:
+    'Compare JobLynk pricing plans for startups, growth-stage teams, and enterprises. Scale AI-powered screening and interview workflows with confidence.',
 };
 
 const page = async ({
@@ -42,9 +44,10 @@ const page = async ({
         className="dark:bg-background-7 bg-background-3"
         badgeText="Get started"
         badgeClass="!badge-cyan"
-        ctaHeading="Build a complete website using the assistance"
-        description="Start your free trial today and see your ideas come to life easily and creatively."
-        ctaBtnText="Get started"
+        ctaHeading="Choose a JobLynk plan built for"
+        spanText="faster hiring"
+        description="Start with the plan that matches your recruiting volume, then scale interviews, analytics, and collaboration as your team grows."
+        ctaBtnText="Talk to sales"
         btnClass="hover:btn-secondary dark:hover:btn-accent"
       />
     </main>
