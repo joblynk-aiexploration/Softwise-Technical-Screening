@@ -9,10 +9,15 @@ export const metadata: Metadata = {
   title: 'Contact Us | Joblynk Talent',
 };
 
-const ContactUs = () => {
+type SP = Promise<Record<string, string | string[] | undefined>>;
+
+const ContactUs = async ({ searchParams }: { searchParams: SP }) => {
+  const q = await searchParams;
+  const status = typeof q.status === 'string' ? q.status : '';
+
   return (
     <main className="bg-background-3 dark:bg-background-7">
-      <ContactInfo />
+      <ContactInfo status={status} />
       <ContactMap />
       <CTA
         className="dark:bg-background-5 bg-white"

@@ -21,8 +21,8 @@ const contactInfoItems = [
     id: 2,
     icon: mailIcon,
     title: 'Email Us',
-    content: 'hello@nextsaaS.com',
-    link: 'mailto:hello@nextsaaS.com',
+    content: 'hello@joblynk.ai',
+    link: 'mailto:hello@joblynk.ai',
     gradient: gradientTwo,
     gradientClass: 'top-[-206px] left-[-36px] rotate-[62deg]',
   },
@@ -37,7 +37,10 @@ const contactInfoItems = [
   },
 ];
 
-const ContactInfo = () => {
+const ContactInfo = ({ status = '' }: { status?: string }) => {
+  const success = status === 'sent';
+  const error = status === 'error';
+
   return (
     <section
       className="pt-32 pb-14 sm:pt-36 md:pt-42 md:pb-16 lg:pb-20 xl:pt-[180px] xl:pb-[100px]"
@@ -88,7 +91,17 @@ const ContactInfo = () => {
             <RevealAnimation
               delay={0.3}
               className="dark:bg-background-6 mx-auto w-full max-w-[847px] rounded-4xl bg-white p-6 md:p-8 lg:p-11">
-              <form action="#" method="POST" className="space-y-8">
+              <form action="/api/contact" method="POST" className="space-y-8">
+                {success && (
+                  <div className="rounded-xl border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-700 dark:bg-green-950/30 dark:text-green-200">
+                    Thank you — your message was sent successfully. Our team will contact you soon.
+                  </div>
+                )}
+                {error && (
+                  <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-700 dark:bg-red-950/30 dark:text-red-200">
+                    We couldn&apos;t submit your message right now. Please try again.
+                  </div>
+                )}
                 {/* name and phone number  */}
                 <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
                   {/*  name */}
