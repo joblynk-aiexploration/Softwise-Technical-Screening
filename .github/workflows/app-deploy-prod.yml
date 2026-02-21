@@ -103,28 +103,31 @@ jobs:
               DEPLOY_PATH="/root/.openclaw/workspace"
             fi
 
-            cd "$DEPLOY_PATH"
+            if [ ! -d "$DEPLOY_PATH" ]; then
+              echo "DEPLOY_PATH does not exist: $DEPLOY_PATH"
+              exit 1
+            fi
 
-            # Keep production aligned with GitHub main
-            git fetch origin main
-            git checkout main
-            git reset --hard origin/main
+            SUDO=""
+            if [ ! -w "$DEPLOY_PATH" ]; then
+              if command -v sudo >/dev/null 2>&1; then
+                SUDO="sudo"
+              else
+                echo "No write access to $DEPLOY_PATH and sudo is unavailable"
+                exit 1
+              fi
+            fi
+
+            $SUDO bash -lc "cd '$DEPLOY_PATH' && git fetch origin main && git checkout main && git reset --hard origin/main"
 
             # Frontend
-            cd "$DEPLOY_PATH/apps/customer-frontend"
-            NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm install --include=dev
-            NODE_OPTIONS=--max-old-space-size=4096 npm run build
-            pm2 restart customer-frontend --update-env
+            $SUDO bash -lc "cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm install --include=dev"
+            $SUDO bash -lc "cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_OPTIONS=--max-old-space-size=4096 npm run build"
+            $SUDO pm2 restart customer-frontend --update-env
 
             # Talent backend
-            cd "$DEPLOY_PATH/voice-call-agent"
-            if [ -d venv ]; then
-              . venv/bin/activate
-            fi
-            if [ -f requirements.txt ]; then
-              pip install -r requirements.txt
-            fi
-            pm2 restart screening-talent --update-env
+            $SUDO bash -lc "cd '$DEPLOY_PATH/voice-call-agent' && if [ -d venv ]; then . venv/bin/activate; fi && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi"
+            $SUDO pm2 restart screening-talent --update-env
 
             # Basic health checks
             curl -fsS https://screening.joblynk.ai/ >/dev/null
