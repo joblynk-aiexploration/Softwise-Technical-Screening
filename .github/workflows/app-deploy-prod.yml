@@ -108,26 +108,27 @@ jobs:
               exit 1
             fi
 
-            SUDO=""
-            if [ ! -w "$DEPLOY_PATH" ]; then
-              if command -v sudo >/dev/null 2>&1; then
-                SUDO="sudo"
-              else
-                echo "No write access to $DEPLOY_PATH and sudo is unavailable"
-                exit 1
-              fi
+            SUDO="sudo -n"
+            if ! command -v sudo >/dev/null 2>&1; then
+              echo "sudo is required for deployment on this host"
+              exit 1
             fi
+
+            NPM_BIN="$(ls -1 /root/.nvm/versions/node/*/bin/npm 2>/dev/null | tail -n 1)"
+            PM2_BIN="$(ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1)"
+            [ -x "$NPM_BIN" ] || { echo "npm binary not found under /root/.nvm"; exit 127; }
+            [ -x "$PM2_BIN" ] || { echo "pm2 binary not found under /root/.nvm"; exit 127; }
 
             $SUDO bash -lc "cd '$DEPLOY_PATH' && git fetch origin main && git checkout main && git reset --hard origin/main"
 
             # Frontend
-            $SUDO bash -lc "if ! command -v npm >/dev/null 2>&1; then export NVM_DIR=\"$HOME/.nvm\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" || true; fi; if ! command -v npm >/dev/null 2>&1; then export NVM_DIR=/root/.nvm; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" || true; fi; command -v npm >/dev/null 2>&1 || { echo 'npm not found'; exit 127; }; cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false npm install --include=dev"
-            $SUDO bash -lc "if ! command -v npm >/dev/null 2>&1; then export NVM_DIR=\"$HOME/.nvm\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" || true; fi; if ! command -v npm >/dev/null 2>&1; then export NVM_DIR=/root/.nvm; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" || true; fi; command -v npm >/dev/null 2>&1 || { echo 'npm not found'; exit 127; }; cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_OPTIONS=--max-old-space-size=4096 npm run build"
-            $SUDO bash -lc "if ! command -v pm2 >/dev/null 2>&1; then export NVM_DIR=\"$HOME/.nvm\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" || true; fi; if ! command -v pm2 >/dev/null 2>&1; then export NVM_DIR=/root/.nvm; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" || true; fi; command -v pm2 >/dev/null 2>&1 || { echo 'pm2 not found'; exit 127; }; pm2 restart customer-frontend --update-env"
+            $SUDO bash -lc "cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_ENV=development NPM_CONFIG_PRODUCTION=false '$NPM_BIN' ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false '$NPM_BIN' install --include=dev"
+            $SUDO bash -lc "cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_OPTIONS=--max-old-space-size=4096 '$NPM_BIN' run build"
+            $SUDO "$PM2_BIN" restart customer-frontend --update-env
 
             # Talent backend
             $SUDO bash -lc "cd '$DEPLOY_PATH/voice-call-agent' && if [ -d venv ]; then . venv/bin/activate; fi && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi"
-            $SUDO bash -lc "if ! command -v pm2 >/dev/null 2>&1; then export NVM_DIR=\"$HOME/.nvm\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" || true; fi; if ! command -v pm2 >/dev/null 2>&1; then export NVM_DIR=/root/.nvm; [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" || true; fi; command -v pm2 >/dev/null 2>&1 || { echo 'pm2 not found'; exit 127; }; pm2 restart screening-talent --update-env"
+            $SUDO "$PM2_BIN" restart screening-talent --update-env
 
             # Basic health checks
             curl -fsS https://screening.joblynk.ai/ >/dev/null
