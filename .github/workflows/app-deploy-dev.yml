@@ -1,0 +1,111 @@
+name: Deploy JobLynk App to DEV
+
+on:
+  push:
+    branches: [DEV]
+    paths:
+      - 'apps/customer-frontend/**'
+      - 'voice-call-agent/**'
+      - '.github/workflows/app-deploy-dev.yml'
+      - '.github/workflows/app-deploy-prod.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: joblynk-dev-deploy
+  cancel-in-progress: true
+
+jobs:
+  validate-and-deploy-dev:
+    runs-on: ubuntu-latest
+    environment: development
+    env:
+      DEV_SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
+      DEV_SSH_USER: ${{ secrets.DEV_SSH_USER }}
+      DEV_SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+      DEV_SSH_PORT: ${{ secrets.DEV_SSH_PORT || '22' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies (including dev)
+        working-directory: apps/customer-frontend
+        env:
+          NODE_ENV: development
+          NPM_CONFIG_PRODUCTION: 'false'
+        run: npm ci --include=dev || npm install --include=dev
+
+      - name: Build frontend
+        working-directory: apps/customer-frontend
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: npm run build
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate voice-call-agent app import
+        working-directory: voice-call-agent
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python - <<'PY'
+          import importlib
+          importlib.import_module('app.main')
+          print('voice-call-agent import check passed')
+          PY
+
+      - name: Validate dev deploy secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=()
+          [ -n "${DEV_SSH_HOST}" ] || missing+=("DEV_SSH_HOST")
+          [ -n "${DEV_SSH_USER}" ] || missing+=("DEV_SSH_USER")
+          [ -n "${DEV_SSH_KEY}" ] || missing+=("DEV_SSH_KEY")
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "Missing required development environment secrets: ${missing[*]}" >&2
+            exit 1
+          fi
+
+      - name: Deploy to DEV via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ env.DEV_SSH_HOST }}
+          username: ${{ env.DEV_SSH_USER }}
+          key: ${{ env.DEV_SSH_KEY }}
+          port: ${{ env.DEV_SSH_PORT }}
+          script_stop: true
+          script: |
+            set -eu
+            DEPLOY_PATH="${{ secrets.DEV_DEPLOY_PATH }}"
+            [ -n "$DEPLOY_PATH" ] || DEPLOY_PATH="/apps/data/joblynktalent-dev"
+            [ -d "$DEPLOY_PATH" ] || { echo "DEV DEPLOY_PATH missing: $DEPLOY_PATH"; exit 1; }
+
+            cd "$DEPLOY_PATH"
+            git config --global --add safe.directory "$DEPLOY_PATH" || true
+            git fetch origin DEV
+            git checkout DEV
+            git reset --hard origin/DEV
+
+            PM2_BIN="$(sudo -n bash -lc 'command -v pm2 || ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1')"
+            sudo -n test -x "$PM2_BIN"
+
+            # Optional app names; defaults avoid touching prod names.
+            FE_APP="${{ secrets.DEV_PM2_FRONTEND_APP }}"
+            BE_APP="${{ secrets.DEV_PM2_BACKEND_APP }}"
+            [ -n "$FE_APP" ] || FE_APP="customer-frontend-dev"
+            [ -n "$BE_APP" ] || BE_APP="screening-talent-dev"
+
+            sudo -n "$PM2_BIN" restart "$FE_APP" --update-env || true
+            sudo -n "$PM2_BIN" restart "$BE_APP" --update-env || true
+
+            echo "DEV deployment completed."

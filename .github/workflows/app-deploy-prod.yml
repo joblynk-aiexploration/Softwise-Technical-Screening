@@ -1,13 +1,22 @@
 name: Deploy JobLynk App to Production
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/customer-frontend/**'
-      - 'voice-call-agent/**'
-      - '.github/workflows/app-deploy-prod.yml'
   workflow_dispatch:
+    inputs:
+      action:
+        description: "deploy or rollback"
+        required: true
+        default: "deploy"
+        type: choice
+        options: [deploy, rollback]
+      ref:
+        description: "Git ref to deploy (branch/tag/sha). Leave blank for origin/main"
+        required: false
+        type: string
+      rollback_ref:
+        description: "Rollback ref (optional). Leave blank to use previous successful ref"
+        required: false
+        type: string
 
 concurrency:
   group: joblynk-prod-deploy
@@ -15,12 +24,14 @@ concurrency:
 
 jobs:
   validate:
+    if: ${{ inputs.action == 'deploy' }}
     name: Validate build artifacts
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.ref || 'main' }}
           submodules: false
 
       - name: Setup Node
@@ -58,6 +69,7 @@ jobs:
           PY
 
   deploy:
+    if: ${{ inputs.action == 'deploy' }}
     name: Deploy to production host
     needs: validate
     runs-on: ubuntu-latest
@@ -67,6 +79,7 @@ jobs:
       PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
       PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
       PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT || '22' }}
+      TARGET_REF: ${{ inputs.ref || 'origin/main' }}
     steps:
       - name: Validate deploy secrets
         shell: bash
@@ -76,13 +89,10 @@ jobs:
           [ -n "${PROD_SSH_HOST}" ] || missing+=("PROD_SSH_HOST")
           [ -n "${PROD_SSH_USER}" ] || missing+=("PROD_SSH_USER")
           [ -n "${PROD_SSH_KEY}" ] || missing+=("PROD_SSH_KEY")
-
           if [ ${#missing[@]} -gt 0 ]; then
             echo "Missing required production environment secrets: ${missing[*]}" >&2
             exit 1
           fi
-
-          # PROD_SSH_PORT defaults to 22 via env expression above.
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
@@ -93,111 +103,118 @@ jobs:
           port: ${{ env.PROD_SSH_PORT }}
           script_stop: true
           script: |
-            # Force-load user environment in non-interactive SSH sessions
             if [ -f "$HOME/.bash_profile" ]; then . "$HOME/.bash_profile"; fi
             if [ -f "$HOME/.bashrc" ]; then . "$HOME/.bashrc"; fi
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" || true
-
             set -eu
 
             DEPLOY_PATH="${{ secrets.PROD_DEPLOY_PATH }}"
-            if [ -z "${DEPLOY_PATH}" ]; then
-              DEPLOY_PATH="/apps/data/joblynktalent"
-            fi
+            [ -n "$DEPLOY_PATH" ] || DEPLOY_PATH="/apps/data/joblynktalent"
+            [ -d "$DEPLOY_PATH" ] || { echo "DEPLOY_PATH does not exist: $DEPLOY_PATH"; exit 1; }
+            command -v sudo >/dev/null 2>&1 || { echo "sudo is required"; exit 1; }
 
-            if [ ! -d "$DEPLOY_PATH" ]; then
-              echo "DEPLOY_PATH does not exist: $DEPLOY_PATH"
-              exit 1
-            fi
-
-            if ! command -v sudo >/dev/null 2>&1; then
-              echo "sudo is required for deployment on this host"
-              exit 1
-            fi
-
-            # Runtime diagnostics removed after stabilization.
-
-            # Resolve NPM and handle sudo requirements for root-installed binaries.
             NPM_BIN="$(command -v npm || true)"
             NPM_USE_SUDO=""
             if [ -z "$NPM_BIN" ] || ! [ -x "$NPM_BIN" 2>/dev/null ]; then
               NPM_BIN="$(sudo -n bash -lc 'command -v npm || ls -1 /root/.nvm/versions/node/*/bin/npm 2>/dev/null | tail -n 1' 2>/dev/null || true)"
-              if [ -n "$NPM_BIN" ]; then
-                NPM_USE_SUDO="sudo -n"
-              fi
+              [ -n "$NPM_BIN" ] && NPM_USE_SUDO="sudo -n"
             fi
 
-            # Resolve PM2 and handle sudo requirements for root-installed binaries.
             PM2_BIN="$(command -v pm2 || true)"
             PM2_USE_SUDO=""
             if [ -z "$PM2_BIN" ] || ! [ -x "$PM2_BIN" 2>/dev/null ]; then
               PM2_BIN="$(sudo -n bash -lc 'command -v pm2 || ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1' 2>/dev/null || true)"
-              if [ -n "$PM2_BIN" ]; then
-                PM2_USE_SUDO="sudo -n"
-              fi
+              [ -n "$PM2_BIN" ] && PM2_USE_SUDO="sudo -n"
             fi
-
-            if [ -z "$PM2_BIN" ]; then
-              NVM_PM2="$(find "$HOME/.nvm/versions/node" -maxdepth 4 \( -type f -o -type l \) -name pm2 2>/dev/null | head -n 1 || true)"
-              if [ -n "$NVM_PM2" ]; then
-                PM2_BIN="$NVM_PM2"
-                PM2_USE_SUDO=""
-              fi
-            fi
-
-            # Binary resolution completed.
             if [ -n "$PM2_USE_SUDO" ]; then
-              $PM2_USE_SUDO test -x "$PM2_BIN" || { echo "pm2 not found or not executable via sudo"; exit 127; }
+              $PM2_USE_SUDO test -x "$PM2_BIN" || { echo "pm2 not executable"; exit 127; }
             else
-              [ -x "$PM2_BIN" ] || { echo "pm2 not found or not executable for deploy user"; exit 127; }
+              [ -x "$PM2_BIN" ] || { echo "pm2 not executable"; exit 127; }
             fi
 
             cd "$DEPLOY_PATH"
             git config --global --add safe.directory "$DEPLOY_PATH" || true
-            git fetch origin main
-            git checkout main
-            git reset --hard origin/main
+            git fetch origin main --tags
+            if [ "${{ env.TARGET_REF }}" = "origin/main" ]; then
+              git checkout main
+              git reset --hard origin/main
+            else
+              git checkout --detach "${{ env.TARGET_REF }}"
+            fi
 
-            # Frontend (dependency/build are optional if npm missing on host)
             cd "$DEPLOY_PATH/apps/customer-frontend"
             CAN_RUN_NPM=false
             if [ -n "$NPM_BIN" ]; then
-              if [ -n "$NPM_USE_SUDO" ]; then
-                $NPM_USE_SUDO test -x "$NPM_BIN" && CAN_RUN_NPM=true || true
-              else
-                [ -x "$NPM_BIN" ] && CAN_RUN_NPM=true || true
-              fi
+              if [ -n "$NPM_USE_SUDO" ]; then $NPM_USE_SUDO test -x "$NPM_BIN" && CAN_RUN_NPM=true || true; else [ -x "$NPM_BIN" ] && CAN_RUN_NPM=true || true; fi
             fi
-
             if [ "$CAN_RUN_NPM" = true ]; then
               $NPM_USE_SUDO env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" ci --include=dev || $NPM_USE_SUDO env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" install --include=dev
               $NPM_USE_SUDO env NODE_OPTIONS=--max-old-space-size=4096 "$NPM_BIN" run build || true
-            else
-              echo "npm not available/executable on host; skipping npm install/build"
             fi
             $PM2_USE_SUDO "$PM2_BIN" restart customer-frontend --update-env
 
-            # Talent backend
             cd "$DEPLOY_PATH/voice-call-agent"
-            if [ -d venv ] && [ -x venv/bin/python ]; then
-              if [ -f requirements.txt ]; then venv/bin/python -m pip install -r requirements.txt; fi
-            else
-              echo "venv/bin/python not available; skipping python dependency install"
+            if [ -d venv ] && [ -x venv/bin/python ] && [ -f requirements.txt ]; then
+              venv/bin/python -m pip install -r requirements.txt
             fi
             $PM2_USE_SUDO "$PM2_BIN" restart screening-talent --update-env
 
-            # Basic health checks (allow warm-up after PM2 restarts)
             ok_root=0
             ok_talent=0
             for i in $(seq 1 20); do
               if curl -fsS https://screening.joblynk.ai/ >/dev/null; then ok_root=1; fi
               if curl -fsS https://screening.joblynk.ai/talent/login >/dev/null; then ok_talent=1; fi
-              if [ "$ok_root" -eq 1 ] && [ "$ok_talent" -eq 1 ]; then
-                break
-              fi
+              [ "$ok_root" -eq 1 ] && [ "$ok_talent" -eq 1 ] && break
               sleep 3
             done
             [ "$ok_root" -eq 1 ] || { echo "Health check failed: /"; exit 1; }
             [ "$ok_talent" -eq 1 ] || { echo "Health check failed: /talent/login"; exit 1; }
+
+            # Track rollback refs
+            PREV="$(cat "$DEPLOY_PATH/.last_successful_ref" 2>/dev/null || true)"
+            [ -n "$PREV" ] && echo "$PREV" > "$DEPLOY_PATH/.previous_successful_ref"
+            git rev-parse HEAD > "$DEPLOY_PATH/.last_successful_ref"
             echo "Production deployment completed successfully."
+
+  rollback:
+    if: ${{ inputs.action == 'rollback' }}
+    name: One-click rollback on production host
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT || '22' }}
+      ROLLBACK_REF_INPUT: ${{ inputs.rollback_ref }}
+    steps:
+      - name: Rollback via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ env.PROD_SSH_HOST }}
+          username: ${{ env.PROD_SSH_USER }}
+          key: ${{ env.PROD_SSH_KEY }}
+          port: ${{ env.PROD_SSH_PORT }}
+          script_stop: true
+          script: |
+            set -eu
+            DEPLOY_PATH="${{ secrets.PROD_DEPLOY_PATH }}"
+            [ -n "$DEPLOY_PATH" ] || DEPLOY_PATH="/apps/data/joblynktalent"
+            cd "$DEPLOY_PATH"
+
+            TARGET_REF="${{ env.ROLLBACK_REF_INPUT }}"
+            if [ -z "$TARGET_REF" ]; then
+              TARGET_REF="$(cat "$DEPLOY_PATH/.previous_successful_ref" 2>/dev/null || true)"
+            fi
+            [ -n "$TARGET_REF" ] || { echo "No rollback ref available"; exit 1; }
+
+            PM2_BIN="$(sudo -n bash -lc 'command -v pm2 || ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1')"
+            sudo -n test -x "$PM2_BIN"
+
+            git fetch origin main --tags
+            git checkout --detach "$TARGET_REF"
+            sudo -n "$PM2_BIN" restart customer-frontend --update-env
+            sudo -n "$PM2_BIN" restart screening-talent --update-env
+            echo "$TARGET_REF" > "$DEPLOY_PATH/.last_successful_ref"
+            echo "Rollback completed to $TARGET_REF"
