@@ -109,27 +109,39 @@ jobs:
               exit 1
             fi
 
-            SUDO="sudo -n"
             if ! command -v sudo >/dev/null 2>&1; then
               echo "sudo is required for deployment on this host"
               exit 1
             fi
 
-            NPM_BIN="$(ls -1 /root/.nvm/versions/node/*/bin/npm 2>/dev/null | tail -n 1)"
-            PM2_BIN="$(ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1)"
-            [ -x "$NPM_BIN" ] || { echo "npm binary not found under /root/.nvm"; exit 127; }
-            [ -x "$PM2_BIN" ] || { echo "pm2 binary not found under /root/.nvm"; exit 127; }
+            # Use deploy user's toolchain for git; npm may fallback to root nvm if missing.
+            NPM_BIN="$(command -v npm || true)"
+            NPM_USE_SUDO=""
+            if [ ! -x "$NPM_BIN" ]; then
+              NPM_BIN="$(ls -1 /root/.nvm/versions/node/*/bin/npm 2>/dev/null | tail -n 1)"
+              [ -x "$NPM_BIN" ] || { echo "npm not found for deploy user or root nvm"; exit 127; }
+              NPM_USE_SUDO="sudo -n"
+            fi
+            PM2_BIN_ROOT="$(ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1)"
+            [ -x "$PM2_BIN_ROOT" ] || { echo "root pm2 binary not found under /root/.nvm"; exit 127; }
 
-            $SUDO bash -lc "cd '$DEPLOY_PATH' && git fetch origin main && git checkout main && git reset --hard origin/main"
+            cd "$DEPLOY_PATH"
+            git config --global --add safe.directory "$DEPLOY_PATH" || true
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
 
             # Frontend
-            $SUDO bash -lc "cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_ENV=development NPM_CONFIG_PRODUCTION=false '$NPM_BIN' ci --include=dev || NODE_ENV=development NPM_CONFIG_PRODUCTION=false '$NPM_BIN' install --include=dev"
-            $SUDO bash -lc "cd '$DEPLOY_PATH/apps/customer-frontend' && NODE_OPTIONS=--max-old-space-size=4096 '$NPM_BIN' run build"
-            $SUDO "$PM2_BIN" restart customer-frontend --update-env
+            cd "$DEPLOY_PATH/apps/customer-frontend"
+            $NPM_USE_SUDO env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" ci --include=dev || $NPM_USE_SUDO env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" install --include=dev
+            $NPM_USE_SUDO env NODE_OPTIONS=--max-old-space-size=4096 "$NPM_BIN" run build
+            sudo -n "$PM2_BIN_ROOT" restart customer-frontend --update-env
 
             # Talent backend
-            $SUDO bash -lc "cd '$DEPLOY_PATH/voice-call-agent' && if [ -d venv ]; then . venv/bin/activate; fi && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi"
-            $SUDO "$PM2_BIN" restart screening-talent --update-env
+            cd "$DEPLOY_PATH/voice-call-agent"
+            if [ -d venv ]; then . venv/bin/activate; fi
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            sudo -n "$PM2_BIN_ROOT" restart screening-talent --update-env
 
             # Basic health checks
             curl -fsS https://screening.joblynk.ai/ >/dev/null
