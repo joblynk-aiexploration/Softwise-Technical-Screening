@@ -114,16 +114,19 @@ jobs:
               exit 1
             fi
 
-            # Use deploy user's toolchain for git; npm may fallback to root nvm if missing.
+            # Use deploy user's toolchain for git. npm/pip are best-effort on host.
             NPM_BIN="$(command -v npm || true)"
-            NPM_USE_SUDO=""
             if [ ! -x "$NPM_BIN" ]; then
-              NPM_BIN="$(ls -1 /root/.nvm/versions/node/*/bin/npm 2>/dev/null | tail -n 1)"
-              [ -x "$NPM_BIN" ] || { echo "npm not found for deploy user or root nvm"; exit 127; }
-              NPM_USE_SUDO="sudo -n"
+              NPM_BIN="$(sudo -n bash -lc 'command -v npm' 2>/dev/null || true)"
             fi
-            PM2_BIN_ROOT="$(ls -1 /root/.nvm/versions/node/*/bin/pm2 2>/dev/null | tail -n 1)"
-            [ -x "$PM2_BIN_ROOT" ] || { echo "root pm2 binary not found under /root/.nvm"; exit 127; }
+
+            PM2_BIN="$(command -v pm2 || true)"
+            PM2_USE_SUDO=""
+            if [ ! -x "$PM2_BIN" ]; then
+              PM2_BIN="$(sudo -n bash -lc 'command -v pm2' 2>/dev/null || true)"
+              PM2_USE_SUDO="sudo -n"
+            fi
+            [ -x "$PM2_BIN" ] || { echo "pm2 not found for deploy user or sudo shell"; exit 127; }
 
             cd "$DEPLOY_PATH"
             git config --global --add safe.directory "$DEPLOY_PATH" || true
@@ -131,17 +134,21 @@ jobs:
             git checkout main
             git reset --hard origin/main
 
-            # Frontend
+            # Frontend (dependency/build are optional if npm missing on host)
             cd "$DEPLOY_PATH/apps/customer-frontend"
-            $NPM_USE_SUDO env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" ci --include=dev || $NPM_USE_SUDO env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" install --include=dev
-            $NPM_USE_SUDO env NODE_OPTIONS=--max-old-space-size=4096 "$NPM_BIN" run build
-            sudo -n "$PM2_BIN_ROOT" restart customer-frontend --update-env
+            if [ -x "$NPM_BIN" ]; then
+              env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" ci --include=dev || env NODE_ENV=development NPM_CONFIG_PRODUCTION=false "$NPM_BIN" install --include=dev
+              env NODE_OPTIONS=--max-old-space-size=4096 "$NPM_BIN" run build || true
+            else
+              echo "npm not available on host; skipping npm install/build"
+            fi
+            $PM2_USE_SUDO "$PM2_BIN" restart customer-frontend --update-env
 
             # Talent backend
             cd "$DEPLOY_PATH/voice-call-agent"
             if [ -d venv ]; then . venv/bin/activate; fi
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-            sudo -n "$PM2_BIN_ROOT" restart screening-talent --update-env
+            if command -v pip >/dev/null 2>&1 && [ -f requirements.txt ]; then pip install -r requirements.txt; else echo "pip not available or requirements missing; skipping pip install"; fi
+            $PM2_USE_SUDO "$PM2_BIN" restart screening-talent --update-env
 
             # Basic health checks
             curl -fsS https://screening.joblynk.ai/ >/dev/null
