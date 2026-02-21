@@ -184,10 +184,10 @@ jobs:
 
             # Talent backend
             cd "$DEPLOY_PATH/voice-call-agent"
-            if [ -d venv ] && [ -x venv/bin/pip ]; then
-              if [ -f requirements.txt ]; then venv/bin/pip install -r requirements.txt; fi
+            if [ -d venv ] && [ -x venv/bin/python ]; then
+              if [ -f requirements.txt ]; then venv/bin/python -m pip install -r requirements.txt; fi
             else
-              echo "venv/bin/pip not available; skipping python dependency install"
+              echo "venv/bin/python not available; skipping python dependency install"
             fi
             $PM2_USE_SUDO "$PM2_BIN" restart screening-talent --update-env
 
